@@ -21,19 +21,20 @@ public class UDP {
 
     /**
      * Get the the input area of a station with stationType and stationId
-     * that has empty space for a mover to load his bin into
-     * @return [stationType, stationId], or [Constants.NONE, Constants.NONE] if no input area satisfies the condition
+     * that has empty space for a mover to load his bin into, and the moverId of that mover
+     * @return [stationType, stationId, moverId], or [NONE, NONE, NONE] if no input area satisfies the condition
      */
     public int[] GetInputAreaWithEmptySpace() {
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                int moverId = GetMoverReadyForUnload(stationType);
                 if (model.qIOAreas[Constants.IN][stationType][stationId].getN() < 5 &&
-                    model.qLoadUnload[Constants.IN][stationType].getN() > 0) {
-                    return new int[] {stationType, stationId};
+                    moverId != Constants.NONE) {
+                    return new int[] {stationType, stationId, moverId};
                 }
             }
         }
-        return new int[] { Constants.NONE, Constants.NONE };
+        return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
     }
 
     /**
@@ -61,19 +62,20 @@ public class UDP {
 
     /**
      * Get the the output area of a station with stationType and stationId
-     * that has a bin for a mover to load into his trolley
-     * @return [stationType, stationId], or [Constants.NONE, Constants.NONE] if no output area satisfies the condition
+     * that has a bin for a mover to load into his trolley, and the moverId of that mover
+     * @return [stationType, stationId, moverId], or [NONE, NONE, NONE] if no output area satisfies the condition
      */
     public int[] GetOutputAreaWithBin() {
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                int moverId = GetMoverReadyForLoad(stationType);
                 if (model.qIOAreas[Constants.OUT][stationType][stationId].getN() > 0 &&
-                    model.qLoadUnload[Constants.OUT][stationType].getN() > 0) {
-                    return new int[] {stationType, stationId};
+                    moverId != Constants.NONE) {
+                    return new int[] {stationType, stationId, moverId};
                 }
             }
         }
-        return new int[] { Constants.NONE, Constants.NONE };
+        return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
     }
 
     /**
@@ -96,6 +98,29 @@ public class UDP {
                 numEmptySlots--;
             }
         }
+    }
+
+    public int GetMoverReadyForUnload(int stationType) {
+        for (Integer moverId : model.qLoadUnload[Constants.IN][stationType].moverList) {
+            Mover mover = model.rgMovers[moverId];
+            if (mover.getN() > 0) {
+                if (stationType != Constants.COAT ||
+                    (stationType == Constants.COAT && !mover.hasAllSpitfirePlanes())) {
+                    return moverId;
+                }
+            }
+        }
+        return Constants.NONE;
+    }
+
+    public int GetMoverReadyForLoad(int stationType) {
+        for (Integer moverId : model.qLoadUnload[Constants.OUT][stationType].moverList) {
+            Mover mover = model.rgMovers[moverId];
+            if (mover.getN() < Mover.MAX_NUM_BIN) {
+                return moverId;
+            }
+        }
+        return Constants.NONE;
     }
 
     /**
@@ -223,15 +248,7 @@ public class UDP {
      */
     public int MovePlanes(int moverId, int currentStationType) {
         Mover mover = model.rgMovers[moverId];
-        boolean hasAllSpitfirePlanes = true;
-
-        // I miss C# and LINQ...
-        for (Bin bin : mover.binList) {
-            if (bin.planeType != Constants.SPITFIRE) {
-                hasAllSpitfirePlanes = false;
-                break;
-            }
-        }
+        boolean hasAllSpitfirePlanes = mover.hasAllSpitfirePlanes();
 
         int nextStationType = Constants.NONE;
 

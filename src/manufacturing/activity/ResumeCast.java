@@ -23,6 +23,8 @@ public class ResumeCast extends Activity{
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForResumeCast();
+        System.out.println("ResumeCast.startingEvent[" + stationId + "]");
+
         this.name = "C" + stationId;
         CastingStation station = model.rcCastingStations[stationId];
         station.isSuspended = false;

@@ -23,7 +23,10 @@ public class UnloadBin extends ConditionalAction {
         int[] ids = model.udp.GetInputAreaWithEmptySpace();
         int stationType = ids[0];
         int stationId = ids[1];
-        int moverId = model.qLoadUnload[Constants.IN][stationType].spRemoveQue();
+        int moverId = ids[2];
+        System.out.println("UnloadBin[" + stationType + ", " + stationId + "]");
+
+        model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
         model.udp.UnloadBin(moverId, stationType, stationId);
         if (model.rgMovers[moverId].getN() == 0) {
             if (stationType != Constants.INSPECT_PACK) {

@@ -25,6 +25,7 @@ public class PutInOutputArea extends ConditionalAction {
         int[] ids = model.udp.GetReadyOutputArea();
         int stationType = ids[0];
         int stationId = ids[1];
+        System.out.println("PutInOutputArea[" + stationType + ", " + stationId + "]");
 
         if (stationType != Constants.CAST) {
             Station station = model.rgStations[stationType][stationId];

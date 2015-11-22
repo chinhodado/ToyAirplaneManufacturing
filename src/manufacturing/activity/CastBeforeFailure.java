@@ -26,6 +26,7 @@ public class CastBeforeFailure extends Activity {
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForCastingBeforeFailure();
+        System.out.println("CastBeforeFailure.startingEvent[" + stationId + "]");
         this.name = "C" + stationId;
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = true;

@@ -26,6 +26,7 @@ public class Cast extends Activity {
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForCasting();
+        System.out.println("Cast.startingEvent[" + stationId + "]");
         this.name = "C" + stationId;
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = true;

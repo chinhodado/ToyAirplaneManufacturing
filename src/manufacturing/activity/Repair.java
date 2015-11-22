@@ -25,6 +25,8 @@ public class Repair extends Activity {
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForRepair();
+        System.out.println("Repair.startingEvent[" + stationId + "]");
+
         this.name = "C" + stationId;
         model.rMaintenancePerson.busy = true;
     }
