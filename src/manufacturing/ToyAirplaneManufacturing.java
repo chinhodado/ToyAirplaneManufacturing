@@ -160,7 +160,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   RC.CastingStations:");
         for (int i = 0; i < numCastingStation; i++) {
             CastingStation station = rcCastingStations[i];
-            System.out.println("      " + i + ".busy " + station.busy + ", timeToFailure: " + station.timeToFailure +
+            System.out.println("      " + i + ".busy: " + station.busy + ", timeToFailure: " + station.timeToFailure +
                     ", castingTimeLeft: " + station.castingTimeLeft + ", isSuspended: " + station.isSuspended +
                     ", planeType: " + station.planeType);
         }
@@ -169,9 +169,10 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
 
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             System.out.println("   RG.Stations[" + stationLabel[stationType]+ "]:");
+            System.out.print("      ");
             for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
                 Station station = rgStations[stationType][stationId];
-                System.out.print("      " + stationId + ".busy: " + station.busy + "  ");
+                System.out.print(stationId + ".busy: " + station.busy + "  ");
             }
             System.out.println();
         }
@@ -179,8 +180,9 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   Q.IOAreas[IN]:");
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             System.out.println("      [" + stationLabel[stationType]+ "]:");
+            System.out.print("         ");
             for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                System.out.print("      " + stationId + ".n: " + qIOAreas[Constants.IN][stationType][stationId].getN() + "  ");
+                System.out.print(stationId + ".n: " + qIOAreas[Constants.IN][stationType][stationId].getN() + "  ");
             }
             System.out.println();
         }
@@ -188,8 +190,9 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   Q.IOAreas[OUT]:");
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
             System.out.println("      [" + stationLabel[stationType]+ "]:");
+            System.out.print("         ");
             for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                System.out.print("      " + stationId + ".n: " + qIOAreas[Constants.OUT][stationType][stationId].getN() + "  ");
+                System.out.print(stationId + ".n: " + qIOAreas[Constants.OUT][stationType][stationId].getN() + "  ");
             }
             System.out.println();
         }
@@ -197,8 +200,9 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   Q.LoadUnload[IN]:");
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             System.out.println("      [" + stationLabel[stationType]+ "]:");
+            System.out.print("         ");
             for (Integer moverId : qLoadUnload[Constants.IN][stationType].moverList) {
-                System.out.print("      " + moverId + ".n: " + rgMovers[moverId].getN() + "  ");
+                System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
             }
             System.out.println();
         }
@@ -206,8 +210,9 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   Q.LoadUnload[OUT]:");
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
             System.out.println("      [" + stationLabel[stationType]+ "]:");
+            System.out.print("         ");
             for (Integer moverId : qLoadUnload[Constants.OUT][stationType].moverList) {
-                System.out.print("      " + moverId + ".n: " + rgMovers[moverId].getN() + "  ");
+                System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
             }
             System.out.println();
         }
