@@ -22,7 +22,7 @@ public class PutInOutputArea extends ConditionalAction {
 
     @Override
     public void actionEvent() {
-        int[] ids = model.udp.StationReadyForWork();
+        int[] ids = model.udp.GetReadyOutputArea();
         int stationType = ids[0];
         int stationId = ids[1];
 

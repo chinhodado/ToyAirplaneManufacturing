@@ -20,7 +20,7 @@ public class UnloadBin extends ConditionalAction {
 
     @Override
     public void actionEvent() {
-        int[] ids = model.udp.StationReadyForWork();
+        int[] ids = model.udp.GetInputAreaWithEmptySpace();
         int stationType = ids[0];
         int stationId = ids[1];
         int moverId = model.qLoadUnload[Constants.IN][stationType].spRemoveQue();
