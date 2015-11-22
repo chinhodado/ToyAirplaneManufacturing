@@ -32,7 +32,7 @@ public class Output {
 
         trjCastingStationBlocked = new OutputSequence[model.numCastingStation];
         for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
-            trjCastingStationBlocked[stationId] = new OutputSequence("CastingStation" + stationId + "blocked");
+            trjCastingStationBlocked[stationId] = new OutputSequence("CastingStation" + stationId + "blocked.txt");
             trjCastingStationBlocked[stationId].put(0.0, lastCastingStationBlocked[stationId]);
         }
 
@@ -40,7 +40,7 @@ public class Output {
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             trjStationBlocked[stationType] = new OutputSequence[model.numStations[stationType]];
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                trjStationBlocked[stationType][stationId] = new OutputSequence("Station" + stationType + "_" + stationId + "blocked");
+                trjStationBlocked[stationType][stationId] = new OutputSequence("Station" + stationType + "_" + stationId + "blocked.txt");
                 trjStationBlocked[stationType][stationId].put(0.0, lastStationBlocked[stationType][stationId]);
             }
         }
