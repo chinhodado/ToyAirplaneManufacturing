@@ -194,7 +194,7 @@ public class UDP {
      * @return
      */
     public int[] GetReadyOutputArea() {
-        for (int stationType = Constants.CAST; stationType <= Constants.INSPECT_PACK; stationType++) {
+        for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
                 boolean condition = model.qIOAreas[Constants.OUT][stationType][stationId].getN() < 5;
                 if (stationType == Constants.CAST) {
@@ -266,34 +266,5 @@ public class UDP {
         }
 
         return nextStationType;
-    }
-
-    // Conveyor M2 or M3 is ready to receive the component in Machine M1
-    protected int conveyorReadyForComp() {
-        int convId = Constants.NONE;
-//        // Check all conveyors
-//        if (!model.rgStations[Constants.M1].busy && model.rgStations[Constants.M1].bin != Station.NO_COMP) {
-//            // Check conveyor to Machine M2
-//            if (model.rgStations[Constants.M1].bin.uType == manufacturing.entity.PlaneType.A
-//                    && model.qIOAreas[Constants.M2].getN() < model.qIOAreas[Constants.M2].length)
-//                convId = Constants.M2;
-//            // Check Conveyor to Machine M3
-//            if (model.rgStations[Constants.M1].bin.uType == manufacturing.entity.PlaneType.B
-//                    && model.qIOAreas[Constants.M3].getN() < model.qIOAreas[Constants.M3].length)
-//                convId = Constants.M3;
-//        }
-        return (convId);
-    }
-
-    // One of the three machines is ready for processing
-    protected int machineReadyForProcessing() {
-        int machineId = Constants.NONE;
-//        // Check all three machines
-//        for (int id = Constants.M1; id <= Constants.M3 && machineId == Constants.NONE; id++) {
-//            if (!model.rgStations[id].busy && model.rgStations[id].bin == Station.NO_COMP
-//                    && model.qIOAreas[id].getN() != 0)
-//                machineId = id;
-//        }
-        return (machineId);
     }
 }
