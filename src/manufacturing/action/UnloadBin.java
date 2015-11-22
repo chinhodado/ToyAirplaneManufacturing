@@ -2,6 +2,7 @@ package manufacturing.action;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
+import manufacturing.Util;
 import simulationModelling.ConditionalAction;
 
 /**
@@ -24,7 +25,7 @@ public class UnloadBin extends ConditionalAction {
         int stationType = ids[0];
         int stationId = ids[1];
         int moverId = ids[2];
-        System.out.println("UnloadBin[" + stationType + ", " + stationId + "]");
+        Util.logVerbose("UnloadBin[" + stationType + ", " + stationId + "]");
 
         model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
         model.udp.UnloadBin(moverId, stationType, stationId);

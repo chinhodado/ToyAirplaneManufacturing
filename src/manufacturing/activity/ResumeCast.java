@@ -2,6 +2,7 @@ package manufacturing.activity;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
+import manufacturing.Util;
 import manufacturing.entity.CastingStation;
 import simulationModelling.Activity;
 
@@ -23,7 +24,7 @@ public class ResumeCast extends Activity{
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForResumeCast();
-        System.out.println("ResumeCast.startingEvent[" + stationId + "]");
+        Util.logVerbose("ResumeCast.startingEvent[" + stationId + "]");
 
         this.name = "C" + stationId;
         CastingStation station = model.rcCastingStations[stationId];

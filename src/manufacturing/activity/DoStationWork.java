@@ -2,6 +2,7 @@ package manufacturing.activity;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
+import manufacturing.Util;
 import manufacturing.entity.Station;
 import simulationModelling.Activity;
 
@@ -29,7 +30,7 @@ public class DoStationWork extends Activity {
         int[] ids = model.udp.StationReadyForWork();
         stationType = ids[0];
         stationId = ids[1];
-        System.out.println("DoStationWork.startingEvent[" + stationType + ", " + stationId + "]");
+        Util.logVerbose("DoStationWork.startingEvent[" + stationType + ", " + stationId + "]");
 
         // Place identifier in name of behaviour object for logging, used by showSbl()
         this.name = "S" + stationType + "_" + stationId;
