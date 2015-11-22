@@ -43,8 +43,7 @@ public class CastBeforeFailure extends Activity {
     @Override
     protected void terminatingEvent() {
         CastingStation station = model.rcCastingStations[stationId];
-        station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST) - duration();
+        station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST) - model.rcCastingStations[stationId].timeToFailure;
         station.timeToFailure = 0;
-        station.isSuspended = true;
     }
 }

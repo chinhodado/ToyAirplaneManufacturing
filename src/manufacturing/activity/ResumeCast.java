@@ -40,7 +40,7 @@ public class ResumeCast extends Activity{
     protected void terminatingEvent() {
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
-        station.timeToFailure -= duration();
+        station.timeToFailure -= model.rcCastingStations[stationId].castingTimeLeft;
         station.castingTimeLeft = 0;
     }
 }

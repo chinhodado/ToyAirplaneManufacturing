@@ -44,6 +44,6 @@ public class Cast extends Activity {
     protected void terminatingEvent() {
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
-        station.timeToFailure -= duration();
+        station.timeToFailure -= model.rvp.uStationWorkTime(Constants.CAST);
     }
 }
