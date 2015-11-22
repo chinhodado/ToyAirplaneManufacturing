@@ -1,12 +1,18 @@
 package manufacturing;
 
+import manufacturing.entity.CastingStation;
+import manufacturing.entity.IOArea;
+import manufacturing.entity.LoadUnload;
+import manufacturing.entity.MaintenancePerson;
+import manufacturing.entity.Mover;
+import manufacturing.entity.Station;
 import simulationModelling.ScheduledAction;
 
 class Initialise extends ScheduledAction {
-    Manufacturing model;
+    ToyAirplaneManufacturing model;
 
     // Constructor
-    public Initialise(Manufacturing model) {
+    public Initialise(ToyAirplaneManufacturing model) {
         this.model = model;
     }
 
@@ -20,12 +26,47 @@ class Initialise extends ScheduledAction {
 
     @Override
     public void actionEvent() {
-        int id; // Machine/Conveyor identifiers
-        for (id = Constants.M1; id <= Constants.M3; id++) {
-            model.rMachines[id] = new Machines(); // Creates the object/entity
-            model.rMachines[id].busy = false;
-            model.rMachines[id].component = Machines.NO_COMP;
-            // qConveyor array created in constructor to initialise parameters
+        // Stations
+        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                // attributes are initialized when object is created
+                model.rgStations[stationType][stationId] = new Station();
+            }
         }
+
+        // Casting stations
+        for (int stationId = 0; stationId < model.numF16CastingStation; stationId++) {
+            model.rcCastingStations[stationId] = new CastingStation(Constants.F16);
+        }
+        for (int stationId = 0; stationId < model.numSpitfireCastingStation; stationId++) {
+            model.rcCastingStations[stationId + model.numF16CastingStation] = new CastingStation(Constants.SPITFIRE);
+        }
+        for (int stationId = 0; stationId < model.numConcordeCastingStation; stationId++) {
+            model.rcCastingStations[stationId + model.numF16CastingStation + model.numSpitfireCastingStation] =
+                    new CastingStation(Constants.CONCORDE);
+        }
+
+        // Input areas and unloading queues
+        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                model.qIOAreas[Constants.IN][stationType][stationId] = new IOArea();
+            }
+            model.qLoadUnload[Constants.IN][stationType] = new LoadUnload();
+        }
+
+        // Output areas and loading queues
+        for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
+            for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                model.qIOAreas[Constants.OUT][stationType][stationId] = new IOArea();
+            }
+            model.qLoadUnload[Constants.OUT][stationType] = new LoadUnload();
+        }
+
+        for (int moverId = 0; moverId < model.numMover; moverId++) {
+            model.rgMovers[moverId] = new Mover();
+            model.qLoadUnload[Constants.OUT][Constants.CAST].spInsertQue(moverId);
+        }
+
+        model.rMaintenancePerson = new MaintenancePerson();
     }
 }

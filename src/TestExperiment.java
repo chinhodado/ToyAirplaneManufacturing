@@ -1,7 +1,7 @@
 
 import cern.jet.random.engine.RandomSeedGenerator;
-import manufacturing.Manufacturing;
 import manufacturing.Seeds;
+import manufacturing.ToyAirplaneManufacturing;
 
 public class TestExperiment {
     /**
@@ -11,7 +11,7 @@ public class TestExperiment {
         int i, NUMRUNS = 40;
         double endTime = 30 * 24 * 60; // run for 30 days
         Seeds[] sds = new Seeds[NUMRUNS];
-        Manufacturing mnf; // Simulation object
+        ToyAirplaneManufacturing mnf; // Simulation object
 
         // Lets get a set of uncorrelated seeds, different seeds for each run
         RandomSeedGenerator rsg = new RandomSeedGenerator();
@@ -24,9 +24,9 @@ public class TestExperiment {
         System.out.println("Conveyor Limits: " + lc2 + ", " + lc3);
         printDSOVsHeader();
         for (i = 0; i < NUMRUNS; i++) {
-            mnf = new Manufacturing(endTime, lc2, lc3, sds[i], true);
-            mnf.runSimulation();
-            printDSOVs(i + 1, mnf);
+//            mnf = new ToyAirplaneManufacturing(endTime, lc2, lc3, sds[i], true);
+//            mnf.runSimulation();
+//            printDSOVs(i + 1, mnf);
         }
     }
 
@@ -34,8 +34,8 @@ public class TestExperiment {
         System.out.println("Run, AverageM1Down, AverageNumConvM2, AverageNumConvM2");
     }
 
-    private static void printDSOVs(int num, Manufacturing mnf) {
-        System.out.println(
-                num + ", " + mnf.getPercentTimeDown() + ", " + mnf.getTimeC2Full() + ", " + mnf.getTimeC3Full());
+    private static void printDSOVs(int num, ToyAirplaneManufacturing mnf) {
+//        System.out.println(
+//                num + ", " + mnf.getPercentTimeCastingStationBlocked() + ", " + mnf.getTimeC2Full() + ", " + mnf.getTimeC3Full());
     }
 }

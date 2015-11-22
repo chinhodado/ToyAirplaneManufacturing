@@ -1,81 +1,105 @@
 package manufacturing;
 
+import manufacturing.entity.CastingStation;
+import manufacturing.entity.Station;
 import simulationModelling.OutputSequence;
 
-class Output {
-    Manufacturing model;
-
-    // DSOVs
-    protected double percentTimeDown() {
-        trjM1Down.computeTrjDSOVs(model.getTime0(), model.getTimef());
-        return (trjM1Down.getMean());
-    }
-
-    protected double timeC2Full() {
-        trjTimeConv2Full.computeTrjDSOVs(model.getTime0(), model.getTimef());
-        return (trjTimeConv2Full.getMean());
-    }
-
-    protected double timeC3Full() {
-        trjTimeConv3Full.computeTrjDSOVs(model.getTime0(), model.getTimef());
-        return (trjTimeConv3Full.getMean());
-    }
+public class Output {
+    ToyAirplaneManufacturing model;
+    public int numSpitfireProducedDaily;
+    public int numF16ProducedDaily;
+    public int numConcordeProducedDaily;
 
     // Trajectory Sequences
-    OutputSequence trjM1Down = new OutputSequence("M1Down");
-    OutputSequence trjTimeConv2Full = new OutputSequence("trjTimeConv2Full");
-    OutputSequence trjTimeConv3Full = new OutputSequence("trjTimeConv3Full");
+    OutputSequence[] trjCastingStationBlocked;
+    OutputSequence[][] trjStationBlocked;
 
     // Last value saved in the trajectory set
-    double lastRM1down;
-    double lastQConveyorsM2N;
-    double lastQConveyorsM3N;
+    double[] lastCastingStationBlocked;
+    double[][] lastStationBlocked;
 
     // Constructor
-    protected Output(Manufacturing model) {
+    protected Output(ToyAirplaneManufacturing model) {
         this.model = model;
+
         // First points in trajectory sequences - range = 0.0
-        double lastRM1down = 0.0;
-        double lastQConveyorsM2N = 0.0;
-        double lastQConveyorsM3N = 0.0;
-        trjM1Down.put(0.0, lastRM1down);
-        trjTimeConv2Full.put(0.0, lastQConveyorsM2N);
-        trjTimeConv3Full.put(0.0, lastQConveyorsM3N);
+        // Java will initialize array values to 0 automatically - no need to do that here
+        lastCastingStationBlocked = new double[model.numCastingStation];
+        lastStationBlocked = new double[4][];
+        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            lastStationBlocked[stationType] = new double[model.numStations[stationType]];
+        }
+
+        trjCastingStationBlocked = new OutputSequence[model.numCastingStation];
+        for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
+            trjCastingStationBlocked[stationId] = new OutputSequence("CastingStation" + stationId + "blocked");
+            trjCastingStationBlocked[stationId].put(0.0, lastCastingStationBlocked[stationId]);
+        }
+
+        trjStationBlocked = new OutputSequence[4][];
+        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            trjStationBlocked[stationType] = new OutputSequence[model.numStations[stationType]];
+            for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                trjStationBlocked[stationType][stationId] = new OutputSequence("Station" + stationType + "_" + stationId + "blocked");
+                trjStationBlocked[stationType][stationId].put(0.0, lastStationBlocked[stationType][stationId]);
+            }
+        }
+    }
+
+    // DSOVs
+    protected double percentTimeCastingStationBlocked() {
+        double meanSum = 0;
+        for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
+            trjCastingStationBlocked[stationId].computeTrjDSOVs(model.getTime0(), model.getTimef());
+            meanSum += trjCastingStationBlocked[stationId].getMean();
+        }
+        return meanSum / model.numCastingStation;
+    }
+
+    protected double percentTimeStationBlocked(int stationType) {
+        double meanSum = 0;
+        for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+            trjStationBlocked[stationType][stationId].computeTrjDSOVs(model.getTime0(), model.getTimef());
+            meanSum += trjStationBlocked[stationType][stationId].getMean();
+        }
+        return meanSum / model.numStations[stationType];
     }
 
     // Update the trajectory sequences
     // curTime - the current time
     protected void updateSequences() {
-        // update TRJ[M1Down]
-        double currentM1Down;
-        double currentTimeConv2Full;
-        double currentTimeConv3Full;
-        if (model.rMachines[Constants.M1].busy == false && model.rMachines[Constants.M1].component != null)
-            currentM1Down = 1;
-        else
-            currentM1Down = 0;
-        if (currentM1Down != lastRM1down) {
-            trjM1Down.put(model.getClock(), currentM1Down);
-            lastRM1down = currentM1Down;
-        }
-        // Update TRJ[Q.Conveyors[M2].N
-        if (model.qConveyors[Constants.M2].getN() == model.qConveyors[Constants.M2].length)
-            currentTimeConv2Full = 1;
-        else
-            currentTimeConv2Full = 0;
-        if (currentTimeConv2Full != lastQConveyorsM2N) {
-            lastQConveyorsM2N = currentTimeConv2Full;
-            trjTimeConv2Full.put(model.getClock(), lastQConveyorsM2N);
+        // update TRJ[RC.CastingStations[stationId].blocked]
+        for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
+            double currentCastingStationBlocked;
+            CastingStation station = model.rcCastingStations[stationId];
+
+            if (!station.busy && station.bin != Constants.NO_BIN)
+                currentCastingStationBlocked = 1;
+            else
+                currentCastingStationBlocked = 0;
+
+            if (currentCastingStationBlocked != lastCastingStationBlocked[stationId]) {
+                trjCastingStationBlocked[stationId].put(model.getClock(), currentCastingStationBlocked);
+                lastCastingStationBlocked[stationId] = currentCastingStationBlocked;
+            }
         }
 
-        // Update TRJ[Q.Conveyors[M3].N
-        if (model.qConveyors[Constants.M3].getN() == model.qConveyors[Constants.M3].length)
-            currentTimeConv3Full = 1;
-        else
-            currentTimeConv3Full = 0;
-        if (currentTimeConv3Full != lastQConveyorsM3N) {
-            lastQConveyorsM3N = currentTimeConv3Full;
-            trjTimeConv3Full.put(model.getClock(), lastQConveyorsM3N);
+        // update TRJ[RG.Stations[stationType][stationId].blocked]
+        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
+                double currentStationBlocked;
+                Station station = model.rgStations[stationType][stationId];
+
+                if (!station.busy && station.bin != Constants.NO_BIN)
+                    currentStationBlocked = 1;
+                else
+                    currentStationBlocked = 0;
+
+                if (currentStationBlocked != lastStationBlocked[stationType][stationId]) {
+                    trjStationBlocked[stationType][stationId].put(model.getClock(), currentStationBlocked);
+                    lastStationBlocked[stationType][stationId] = currentStationBlocked;
+                }
+            }
         }
     }
 }
