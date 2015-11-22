@@ -45,6 +45,9 @@ class Initialise extends ScheduledAction {
             model.rcCastingStations[stationId + model.numF16CastingStation + model.numSpitfireCastingStation] =
                     new CastingStation(Constants.CONCORDE);
         }
+        for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
+            model.rcCastingStations[stationId].timeToFailure = model.rvp.uTimeToFailure();
+        }
 
         // Input areas and unloading queues
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
