@@ -1,7 +1,14 @@
 package manufacturing;
 
+import manufacturing.action.LoadBin;
+import manufacturing.action.PutInOutputArea;
 import manufacturing.action.UnloadBin;
+import manufacturing.activity.Cast;
+import manufacturing.activity.CastBeforeFailure;
 import manufacturing.activity.DoStationWork;
+import manufacturing.activity.MovePlanes;
+import manufacturing.activity.Repair;
+import manufacturing.activity.ResumeCast;
 import manufacturing.entity.CastingStation;
 import manufacturing.entity.IOArea;
 import manufacturing.entity.LoadUnload;
@@ -129,20 +136,60 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     private boolean scanPreconditions() {
         boolean statusChanged = false;
         // Conditional Actions
-        if (UnloadBin.precondition(this) == true) {
-            UnloadBin act = new UnloadBin(this); // Generate instance //
-                                                       // instance
+        if (LoadBin.precondition(this) == true) {
+            LoadBin act = new LoadBin(this);
             act.actionEvent();
             statusChanged = true;
         }
+        if (PutInOutputArea.precondition(this) == true) {
+            PutInOutputArea act = new PutInOutputArea(this);
+            act.actionEvent();
+            statusChanged = true;
+        }
+        if (UnloadBin.precondition(this) == true) {
+            UnloadBin act = new UnloadBin(this);
+            act.actionEvent();
+            statusChanged = true;
+        }
+
         // Conditional Activities
-        if (DoStationWork.precondition(this) == true) {
-            DoStationWork act = new DoStationWork(this); // Generate instance
+        if (Cast.precondition(this) == true) {
+            Cast act = new Cast(this);
             act.startingEvent();
             scheduleActivity(act);
             statusChanged = true;
         }
-        return (statusChanged);
+        if (CastBeforeFailure.precondition(this) == true) {
+            CastBeforeFailure act = new CastBeforeFailure(this);
+            act.startingEvent();
+            scheduleActivity(act);
+            statusChanged = true;
+        }
+        if (DoStationWork.precondition(this) == true) {
+            DoStationWork act = new DoStationWork(this);
+            act.startingEvent();
+            scheduleActivity(act);
+            statusChanged = true;
+        }
+        if (MovePlanes.precondition(this) == true) {
+            MovePlanes act = new MovePlanes(this);
+            act.startingEvent();
+            scheduleActivity(act);
+            statusChanged = true;
+        }
+        if (Repair.precondition(this) == true) {
+            Repair act = new Repair(this);
+            act.startingEvent();
+            scheduleActivity(act);
+            statusChanged = true;
+        }
+        if (ResumeCast.precondition(this) == true) {
+            ResumeCast act = new ResumeCast(this);
+            act.startingEvent();
+            scheduleActivity(act);
+            statusChanged = true;
+        }
+        return statusChanged;
     }
 
     @Override
