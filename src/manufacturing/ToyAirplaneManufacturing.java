@@ -90,9 +90,9 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         numCoatingStation = params[5];
         numInspectionPackagingStation = params[6];
 
+        numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
         numStations = new int[] { numCastingStation, numCuttingGrindingStation,
                 numCoatingStation, numInspectionPackagingStation };
-        numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
 
         rgStations = new Station[4][]; // the first array is not used
         rgStations[Constants.CUT_GRIND] = new Station[numCuttingGrindingStation];
