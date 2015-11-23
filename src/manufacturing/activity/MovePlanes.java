@@ -35,7 +35,13 @@ public class MovePlanes extends Activity {
         // Place identifier in name of behaviour object for logging, used by showSbl()
         this.name = "M" + moverId + "_" + stationType;
 
-        model.qLoadUnload[Constants.OUT][stationType].spRemoveQue(moverId);
+        if (stationType == Constants.INSPECT_PACK) {
+            model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
+        }
+        else {
+            model.qLoadUnload[Constants.OUT][stationType].spRemoveQue(moverId);
+        }
+
         nextStationType = model.udp.MovePlanes(moverId, stationType);
     }
 
