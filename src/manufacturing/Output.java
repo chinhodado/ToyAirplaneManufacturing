@@ -73,6 +73,10 @@ public class Output {
             double currentCastingStationBlocked;
             CastingStation station = model.rcCastingStations[stationId];
 
+            // The station.bin.planeType != Constants.NONE part is mainly for casting stations,
+            // since a "bin" can be sitting in a station while it was broken in the middle of a casting,
+            // and it is not busy but waiting to be repaired and then resume casting with the current "bin",
+            // so it's not considered blocked
             if (!station.busy && station.bin != Constants.NO_BIN && station.bin.planeType != Constants.NONE)
                 currentCastingStationBlocked = 1;
             else
