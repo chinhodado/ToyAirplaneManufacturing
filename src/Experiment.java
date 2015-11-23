@@ -35,15 +35,8 @@ public class Experiment {
             numInspectionPackagingStation = 1;
 
         double meanCastingBlockedTime = 0, meanCutGringBlockedTime = 0, meanCoatBlockedTime = 0, meanInspectPackBlockedTime = 0;
-        while (numMover <= 50 &&
-                numF16CastingStation <= 20 &&
-                numConcordeCastingStation <= 20 &&
-                numSpitfireCastingStation <= 20 &&
-                numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation <= 20 &&
-                numCuttingGrindingStation <= 20 &&
-                numCoatingStation <= 20 &&
-                numInspectionPackagingStation <= 20) {
 
+        while (true) {
             Util.logDetail("==================New run with modified parameter===================");
             int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
                     numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
@@ -58,6 +51,7 @@ public class Experiment {
                 meanCoatBlockedTime += model.getPercentTimeStationBlocked(Constants.COAT);
                 meanInspectPackBlockedTime += model.getPercentTimeStationBlocked(Constants.INSPECT_PACK);
             }
+
             meanCastingBlockedTime /= NUMRUNS;
             meanCutGringBlockedTime /= NUMRUNS;
             meanCoatBlockedTime /= NUMRUNS;
