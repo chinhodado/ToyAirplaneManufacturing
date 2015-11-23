@@ -1,6 +1,7 @@
 package manufacturing.entity;
 
+import manufacturing.Constants;
+
 public class Bin {
-    // TODO: may want to make this an enum
-    public int planeType;
+    public int planeType = Constants.NONE;
 }

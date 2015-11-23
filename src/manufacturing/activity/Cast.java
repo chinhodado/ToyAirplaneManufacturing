@@ -34,11 +34,11 @@ public class Cast extends Activity {
         station.busy = true;
 
         if (station.castingTimeLeft > 0) {
-
+            // resuming from an interrupted casting - nothing else to be done
         }
         else {
+            // a new casting session
             station.bin = new Bin();
-            station.bin.planeType = station.planeType;
         }
     }
 
@@ -67,15 +67,26 @@ public class Cast extends Activity {
         station.busy = false;
 
         double duration = duration();
-        if (station.castingTimeLeft > 0) {
+        if (station.castingTimeLeft > 0) { // resume from an interrupted cast
+            // done with the casting
+            if (station.castingTimeLeft == duration) {
+                station.bin.planeType = station.planeType;
+            }
+            // if castingTimeLeft > duration, that means interrupted again - this machine sure breaks down a lot...
+            // either way, reduce casting timeLeft by duration (will be reduced to 0 if the casting is completed)
             if (station.castingTimeLeft >= duration) {
                 station.castingTimeLeft -= duration;
             }
             // can't be <, that wouldn't make sense
         }
-        else {
+        else { // new cast
+            // new cast is not done, machine is broken midway
             if (duration < model.rvp.uStationWorkTime(Constants.CAST)) {
                 station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST) - duration;
+            }
+            // new cast is done
+            else if (duration == model.rvp.uStationWorkTime(Constants.CAST)) {
+                station.bin.planeType = station.planeType;
             }
             // can't be >, wouldn't make sense (duration must be <= casting time, always)
         }

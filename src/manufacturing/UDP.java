@@ -200,7 +200,8 @@ public class UDP {
                 boolean condition = model.qIOAreas[Constants.OUT][stationType][stationId].getN() < 5;
                 if (stationType == Constants.CAST) {
                     CastingStation station = model.rcCastingStations[stationId];
-                    condition = condition && station.bin != Constants.NO_BIN && !station.busy;
+                    condition = condition && station.bin != Constants.NO_BIN &&
+                            station.bin.planeType != Constants.NONE && !station.busy;
                 }
                 else {
                     Station station = model.rgStations[stationType][stationId];
