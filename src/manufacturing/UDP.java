@@ -21,24 +21,33 @@ public class UDP {
 
     /**
      * Get the the input area of a station with stationType and stationId
-     * that has empty space for a mover to load his bin into, and the moverId of that mover
+     * that has the most empty space for a mover to load his bin into, and the moverId of that mover
      * @return [stationType, stationId, moverId], or [NONE, NONE, NONE] if no input area satisfies the condition
      */
     public int[] GetInputAreaWithEmptySpace() {
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
+            // the stationId of the station with an input area that can hold the most bins,
+            // i.e. holding the least number of bins
+            // alternatively, we can use a priority queue, but nah...
+            int stationIdWithMinInput = 0;
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                int moverId = GetMoverReadyForUnload(stationType);
-                if (model.qIOAreas[Constants.IN][stationType][stationId].getN() < 5 &&
-                    moverId != Constants.NONE) {
-                    return new int[] {stationType, stationId, moverId};
+                IOArea currentInputArea = model.qIOAreas[Constants.IN][stationType][stationId];
+                IOArea currentMinInputArea = model.qIOAreas[Constants.IN][stationType][stationIdWithMinInput];
+                if (currentInputArea.getN() < currentMinInputArea.getN()) {
+                    stationIdWithMinInput = stationId;
                 }
+            }
+            int moverId = GetMoverReadyForUnload(stationType);
+            if (model.qIOAreas[Constants.IN][stationType][stationIdWithMinInput].getN() < 5 &&
+                moverId != Constants.NONE) {
+                return new int[] {stationType, stationIdWithMinInput, moverId};
             }
         }
         return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
     }
 
     /**
-     * Unload a mover's bins into the input area of a station
+     * Unload a mover's bins into the input area of a station, one at a time
      * @param moverId The id of the mover
      * @param stationType The station type
      * @param stationId The station ID
@@ -46,16 +55,16 @@ public class UDP {
     public void UnloadBin(int moverId, int stationType, int stationId) {
         Mover mover = model.rgMovers[moverId];
         IOArea inputArea = model.qIOAreas[Constants.IN][stationType][stationId];
-        int numEmptySlots = inputArea.length - inputArea.getN();
+        boolean doneUnload = false;
         for (Bin bin : new ArrayList<Bin>(mover.binList)) { // clone-and-remove trick
-            if (numEmptySlots <= 0) {
+            if (doneUnload) {
                 break;
             }
             else if (stationType != Constants.COAT ||
                     (stationType == Constants.COAT && bin.planeType != Constants.SPITFIRE)) {
                 inputArea.spInsertQue(bin);
                 mover.binList.remove(bin);
-                numEmptySlots--;
+                doneUnload = true;
             }
         }
     }
