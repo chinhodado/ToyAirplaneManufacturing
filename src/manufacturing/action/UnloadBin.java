@@ -27,26 +27,20 @@ public class UnloadBin extends ConditionalAction {
         int moverId = ids[2];
         Util.logVerbose("UnloadBin[" + stationType + ", " + stationId + "]");
 
-        model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
         model.udp.UnloadBin(moverId, stationType, stationId);
+
+        // if mover has no more bins left
         if (model.rgMovers[moverId].getN() == 0) {
             if (stationType != Constants.INSPECT_PACK) {
                 // move to the loading queue
+                model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
                 model.qLoadUnload[Constants.OUT][stationType].spInsertQue(moverId);
-            }
-            else {
-                // it is inspect/pack, the mover will do MovePlanes later
-                // reinsert mover to current queue
-                model.qLoadUnload[Constants.IN][stationType].spInsertQue(moverId);
             }
         }
         else {
             if (model.rgMovers[moverId].hasAllSpitfirePlanes() && stationType == Constants.COAT) {
+                model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
                 model.qLoadUnload[Constants.OUT][stationType].spInsertQue(moverId);
-            }
-            else {
-                // reinsert mover to current queue
-                model.qLoadUnload[Constants.IN][stationType].spInsertQue(moverId);
             }
         }
     }
