@@ -53,13 +53,13 @@ public class DoStationWork extends Activity {
         if (stationType == Constants.INSPECT_PACK) {
             switch (station.bin.planeType) {
             case Constants.SPITFIRE:
-                model.output.numSpitfireProducedDaily++;
+                model.output.numSpitfireProducedDaily += 24;
                 break;
             case Constants.F16:
-                model.output.numF16ProducedDaily++;
+                model.output.numF16ProducedDaily += 24;
                 break;
             case Constants.CONCORDE:
-                model.output.numConcordeProducedDaily++;
+                model.output.numConcordeProducedDaily += 24;
                 break;
             default:
                 System.out.printf("DoStationWork.terminatingEvent: Invalid plane type: %d\n", station.bin.planeType);
