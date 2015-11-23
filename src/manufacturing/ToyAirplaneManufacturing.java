@@ -190,63 +190,78 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.printf("Clock = %10.4f\n", getClock());
 
         // Casting stations
-        System.out.println("   RC.CastingStations:");
+        System.out.println("   CAST:");
+        System.out.println("      RC.CastingStations:");
+        String[] planeLabel = new String[] {"F16", "Concorde", "Spitfire"};
         for (int i = 0; i < numCastingStation; i++) {
             CastingStation station = rcCastingStations[i];
-            System.out.println("      " + i + ".busy: " + station.busy + ", timeToFailure: " + station.timeToFailure +
-                    ", castingTimeLeft: " + station.castingTimeLeft + ", planeType: " + station.planeType);
+            System.out.println("         " + i + ".busy: " + station.busy + ", timeToFailure: " + station.timeToFailure +
+                    ", castingTimeLeft: " + station.castingTimeLeft + ", planeType: " + planeLabel[station.planeType]);
         }
+
+        // casting output areas
+        System.out.println("      Q.IOAreas[OUT][CAST]");
+        System.out.print("         ");
+        for (int stationId = 0; stationId < numCastingStation; stationId++) {
+            System.out.print(stationId + ".n: " + qIOAreas[Constants.OUT][Constants.CAST][stationId].getN() + "  ");
+        }
+        System.out.println();
+
+        // casting loading queue
+        System.out.println("      Q.LoadUnload[OUT][CAST]");
+        System.out.print("         ");
+        for (Integer moverId : qLoadUnload[Constants.OUT][Constants.CAST].moverList) {
+            System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
+        }
+        System.out.println();
 
         String[] stationLabel = new String[] {"CAST", "CUT_GRIND", "COAT", "INSPECT_PACK"};
 
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
-            System.out.println("   RG.Stations[" + stationLabel[stationType]+ "]:");
-            System.out.print("      ");
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                Station station = rgStations[stationType][stationId];
-                System.out.print(stationId + ".busy: " + station.busy + "  ");
-            }
-            System.out.println();
-        }
+            System.out.println("   " + stationLabel[stationType]+ ":");
 
-        System.out.println("   Q.IOAreas[IN]:");
-        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
-            System.out.println("      [" + stationLabel[stationType]+ "]:");
-            System.out.print("         ");
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                System.out.print(stationId + ".n: " + qIOAreas[Constants.IN][stationType][stationId].getN() + "  ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("   Q.IOAreas[OUT]:");
-        for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
-            System.out.println("      [" + stationLabel[stationType]+ "]:");
-            System.out.print("         ");
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                System.out.print(stationId + ".n: " + qIOAreas[Constants.OUT][stationType][stationId].getN() + "  ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("   Q.LoadUnload[IN]:");
-        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
-            System.out.println("      [" + stationLabel[stationType]+ "]:");
+            // unloading queue
+            System.out.println("      Q.LoadUnload[IN][" + stationLabel[stationType]+ "]:");
             System.out.print("         ");
             for (Integer moverId : qLoadUnload[Constants.IN][stationType].moverList) {
                 System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
             }
             System.out.println();
-        }
 
-        System.out.println("   Q.LoadUnload[OUT]:");
-        for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
-            System.out.println("      [" + stationLabel[stationType]+ "]:");
+            // input areas
+            System.out.println("      Q.IOAreas[IN][" + stationLabel[stationType]+ "]:");
             System.out.print("         ");
-            for (Integer moverId : qLoadUnload[Constants.OUT][stationType].moverList) {
-                System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
+            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
+                System.out.print(stationId + ".n: " + qIOAreas[Constants.IN][stationType][stationId].getN() + "  ");
             }
             System.out.println();
+
+            // stations
+            System.out.println("      RG.Stations[" + stationLabel[stationType]+ "]:");
+            System.out.print("         ");
+            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
+                Station station = rgStations[stationType][stationId];
+                System.out.print(stationId + ".busy: " + station.busy + "  ");
+            }
+            System.out.println();
+
+            if (stationType != Constants.INSPECT_PACK) {
+                // output areas
+                System.out.println("      Q.IOAreas[OUT][" + stationLabel[stationType]+ "]");
+                System.out.print("         ");
+                for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
+                    System.out.print(stationId + ".n: " + qIOAreas[Constants.OUT][stationType][stationId].getN() + "  ");
+                }
+                System.out.println();
+
+                // loading queue
+                System.out.println("      Q.LoadUnload[OUT][" + stationLabel[stationType]+ "]");
+                System.out.print("         ");
+                for (Integer moverId : qLoadUnload[Constants.OUT][stationType].moverList) {
+                    System.out.print(moverId + ".n: " + rgMovers[moverId].getN() + "  ");
+                }
+                System.out.println();
+            }
         }
     }
 }
