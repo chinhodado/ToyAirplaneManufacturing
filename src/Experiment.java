@@ -42,12 +42,12 @@ public class Experiment {
                 numCoatingStation <= 20 &&
                 numInspectionPackagingStation <= 20) {
 
-            // System.out.println("Conveyor Limits: "+lc2+", "+lc3);
+            System.out.println("==================New run with modified parameter===================");
+            int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
+                    numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
+                    numInspectionPackagingStation};
+            System.out.println(Arrays.toString(params));
             for (i = 0; i < NUMRUNS; i++) {
-                int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
-                        numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
-                        numInspectionPackagingStation};
-
                 model = new ToyAirplaneManufacturing(endTime, params, sds[i], true);
                 model.runSimulation();
 
@@ -61,8 +61,6 @@ public class Experiment {
             meanCoatBlockedTime /= NUMRUNS;
             meanInspectPackBlockedTime /= NUMRUNS;
 
-//            System.out.println("Q.Conveyors[M2].length = " + lc2 + ", Q.Conveyors[M2].length = " + lc3 + ": DnTimePE= "
-//                    + meanDnTime + ", C2FullTimePE= " + meanC2Full + ", C3FullTimePE= " + meanC3Full);
             if (model.output.numConcordeProducedDaily >= 2340 &&
                 model.output.numF16ProducedDaily >= 1950 &&
                 model.output.numSpitfireProducedDaily >= 1300)
@@ -71,6 +69,12 @@ public class Experiment {
             double percentConcordeProduced = (double)model.output.numConcordeProducedDaily / 2340;
             double percentF16Produced = (double)model.output.numF16ProducedDaily / 1950;
             double percentSpitfireProduced = (double)model.output.numSpitfireProducedDaily / 1300;
+            System.out.println("Num Concorde produced: " + model.output.numConcordeProducedDaily);
+            System.out.println("Percent Concorde produced: " + percentConcordeProduced);
+            System.out.println("Num F16 produced: " + model.output.numF16ProducedDaily);
+            System.out.println("Percent F16 produced: " + percentF16Produced);
+            System.out.println("Num Spitfire produced: " + model.output.numSpitfireProducedDaily);
+            System.out.println("Percent Spitfire produced: " + percentSpitfireProduced);
 
             double minProducedPercent = Collections.min(new ArrayList<Double>(
                     Arrays.asList(percentConcordeProduced, percentF16Produced, percentSpitfireProduced)));
@@ -79,18 +83,36 @@ public class Experiment {
                     Arrays.asList(meanCastingBlockedTime, meanCutGringBlockedTime,
                                     meanCoatBlockedTime, meanInspectPackBlockedTime)));
 
-            if (maxBlockTime == meanCastingBlockedTime) {
-                if (minProducedPercent == percentConcordeProduced) numConcordeCastingStation++;
-                else if (minProducedPercent == percentF16Produced) numF16CastingStation++;
-                else if (minProducedPercent == percentSpitfireProduced) numSpitfireCastingStation++;
+            int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
+            if (numCastingStation == 20 && numCuttingGrindingStation == 20 && numCoatingStation == 20 && numInspectionPackagingStation == 20) {
+                System.out.println("Something went horribly wrong...");
+                break;
             }
-            else if (maxBlockTime == meanCutGringBlockedTime) {
+
+            if (maxBlockTime == meanCastingBlockedTime && numCastingStation < 20) {
+                if (minProducedPercent == percentConcordeProduced) {
+                    System.out.println("Adding 1 Concorde casting station");
+                    numConcordeCastingStation++;
+                }
+                else if (minProducedPercent == percentF16Produced){
+                    System.out.println("Adding 1 F16 casting station");
+                    numF16CastingStation++;
+                }
+                else if (minProducedPercent == percentSpitfireProduced) {
+                    System.out.println("Adding 1 Spitfire casting station");
+                    numSpitfireCastingStation++;
+                }
+            }
+            else if (maxBlockTime == meanCutGringBlockedTime && numCuttingGrindingStation < 20) {
+                System.out.println("Adding 1 cutting/grinding station");
                 numCuttingGrindingStation++;
             }
-            else if (maxBlockTime == meanCoatBlockedTime) {
+            else if (maxBlockTime == meanCoatBlockedTime && numCoatingStation < 20) {
+                System.out.println("Adding 1 coating station");
                 numCoatingStation++;
             }
-            else if (maxBlockTime == meanInspectPackBlockedTime) {
+            else if (maxBlockTime == meanInspectPackBlockedTime && numInspectionPackagingStation < 20) {
+                System.out.println("Adding 1 inspection/packaging station");
                 numInspectionPackagingStation++;
             }
         }
