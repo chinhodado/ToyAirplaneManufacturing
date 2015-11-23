@@ -73,7 +73,7 @@ public class Output {
             double currentCastingStationBlocked;
             CastingStation station = model.rcCastingStations[stationId];
 
-            if (!station.busy && station.bin != Constants.NO_BIN)
+            if (!station.busy && station.bin != Constants.NO_BIN && station.bin.planeType != Constants.NONE)
                 currentCastingStationBlocked = 1;
             else
                 currentCastingStationBlocked = 0;
