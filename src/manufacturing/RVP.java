@@ -50,20 +50,20 @@ public class RVP {
     }
 
     public double uStationWorkTime(int stationType) {
-        double workTime = 10;
+        double workTime = 0;
 
         switch (stationType) {
         case Constants.CAST:
-            workTime = CASTING_TIME;
+            workTime = CASTING_TIME * 4;
             break;
         case Constants.CUT_GRIND:
-            workTime = cutTime.next() + grindTime.nextDouble();
+            workTime = (cutTime.next() + grindTime.nextDouble()) * 24;
             break;
         case Constants.COAT:
             workTime = COATING_TIME;
             break;
         case Constants.INSPECT_PACK:
-            workTime = inspectPackTime.next();
+            workTime = inspectPackTime.next() * 24;
             break;
         default:
             System.out.printf("udp.uStationWorkTime: Invalid station type: %d\n", stationType);
