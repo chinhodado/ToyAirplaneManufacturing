@@ -164,7 +164,8 @@ public class UDP {
             CastingStation station = model.rcCastingStations[stationId];
             if (!station.busy &&
                 station.bin == Constants.NO_BIN &&
-                station.timeToFailure < model.rvp.uStationWorkTime(Constants.CAST)) {
+                station.timeToFailure < model.rvp.uStationWorkTime(Constants.CAST) &&
+                station.timeToFailure > 0) {
                 return stationId;
             }
         }
