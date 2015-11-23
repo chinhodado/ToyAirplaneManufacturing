@@ -27,9 +27,6 @@ public class LoadBin extends ConditionalAction {
         int moverId = ids[2];
         Util.logVerbose("LoadBin[" + stationType + ", " + stationId + "]");
 
-        model.qLoadUnload[Constants.OUT][stationType].spRemoveQue(moverId);
         model.udp.LoadBin(moverId, stationType, stationId);
-        // reinsert the mover into the queue
-        model.qLoadUnload[Constants.OUT][stationType].spInsertQue(moverId);
     }
 }
