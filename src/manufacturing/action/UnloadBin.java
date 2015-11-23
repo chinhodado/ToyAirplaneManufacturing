@@ -34,7 +34,11 @@ public class UnloadBin extends ConditionalAction {
                 // move to the loading queue
                 model.qLoadUnload[Constants.OUT][stationType].spInsertQue(moverId);
             }
-            // else if it is inspect/pack, the mover will do MovePlanes later
+            else {
+                // it is inspect/pack, the mover will do MovePlanes later
+                // reinsert mover to current queue
+                model.qLoadUnload[Constants.IN][stationType].spInsertQue(moverId);
+            }
         }
         else {
             if (model.rgMovers[moverId].hasAllSpitfirePlanes() && stationType == Constants.COAT) {
