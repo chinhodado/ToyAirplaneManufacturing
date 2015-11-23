@@ -8,7 +8,6 @@ public class CastingStation {
     public Bin bin = Constants.NO_BIN;
     public double timeToFailure = 0;
     public double castingTimeLeft = 0;
-    public boolean isSuspended = false;
     public int planeType = Constants.NONE;
 
     public CastingStation(int planeType) {

@@ -14,6 +14,7 @@ import simulationModelling.Activity;
  */
 public class Cast extends Activity {
     ToyAirplaneManufacturing model;
+    CastingStation station;
     int stationId;
 
     public Cast(ToyAirplaneManufacturing model) {
@@ -29,21 +30,55 @@ public class Cast extends Activity {
         stationId = model.udp.StationReadyForCasting();
         Util.logVerbose("Cast.startingEvent[" + stationId + "]");
         this.name = "C" + stationId;
-        CastingStation station = model.rcCastingStations[stationId];
+        station = model.rcCastingStations[stationId];
         station.busy = true;
-        station.bin = new Bin();
-        station.bin.planeType = station.planeType;
+
+        if (station.castingTimeLeft > 0) {
+
+        }
+        else {
+            station.bin = new Bin();
+            station.bin.planeType = station.planeType;
+        }
     }
 
     @Override
     protected double duration() {
-        return model.rvp.uStationWorkTime(Constants.CAST);
+        double wouldBeTime;
+        if (station.castingTimeLeft > 0) {
+            wouldBeTime = station.castingTimeLeft;
+        }
+        else {
+            wouldBeTime = model.rvp.uStationWorkTime(Constants.CAST);
+        }
+
+        if (wouldBeTime > station.timeToFailure) {
+            return station.timeToFailure;
+        }
+        else {
+            return wouldBeTime;
+        }
     }
 
     @Override
     protected void terminatingEvent() {
+        Util.logVerbose("Cast.terminatingEvent[" + stationId + "]");
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
-        station.timeToFailure -= model.rvp.uStationWorkTime(Constants.CAST);
+
+        double duration = duration();
+        if (station.castingTimeLeft > 0) {
+            if (station.castingTimeLeft >= duration) {
+                station.castingTimeLeft -= duration;
+            }
+            // can't be <, that wouldn't make sense
+        }
+        else {
+            if (duration < model.rvp.uStationWorkTime(Constants.CAST)) {
+                station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST) - duration;
+            }
+            // can't be >, wouldn't make sense (duration must be <= casting time, always)
+        }
+        station.timeToFailure -= duration;
     }
 }

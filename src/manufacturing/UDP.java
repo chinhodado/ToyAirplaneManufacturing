@@ -150,33 +150,8 @@ public class UDP {
         for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
             CastingStation station = model.rcCastingStations[stationId];
             if (!station.busy &&
-                station.bin == Constants.NO_BIN &&
-                station.timeToFailure >= model.rvp.uStationWorkTime(Constants.CAST)) {
-                return stationId;
-            }
-        }
-
-        return Constants.NONE;
-    }
-
-    public int StationReadyForCastingBeforeFailure() {
-        for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
-            CastingStation station = model.rcCastingStations[stationId];
-            if (!station.busy &&
-                station.bin == Constants.NO_BIN &&
-                station.timeToFailure < model.rvp.uStationWorkTime(Constants.CAST) &&
-                station.timeToFailure > 0) {
-                return stationId;
-            }
-        }
-
-        return Constants.NONE;
-    }
-
-    public int StationReadyForResumeCast() {
-        for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
-            CastingStation station = model.rcCastingStations[stationId];
-            if (station.isSuspended) {
+                station.timeToFailure != 0 &&
+                (station.bin == Constants.NO_BIN || (station.bin != Constants.NO_BIN && station.castingTimeLeft > 0))) {
                 return stationId;
             }
         }

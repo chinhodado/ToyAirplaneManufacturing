@@ -42,6 +42,5 @@ public class Repair extends Activity {
         CastingStation station = model.rcCastingStations[stationId];
         station.timeToFailure = model.rvp.uTimeToFailure();
         model.rMaintenancePerson.busy = false;
-        station.isSuspended = true;
     }
 }

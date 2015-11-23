@@ -4,11 +4,9 @@ import manufacturing.action.LoadBin;
 import manufacturing.action.PutInOutputArea;
 import manufacturing.action.UnloadBin;
 import manufacturing.activity.Cast;
-import manufacturing.activity.CastBeforeFailure;
 import manufacturing.activity.DoStationWork;
 import manufacturing.activity.MovePlanes;
 import manufacturing.activity.Repair;
-import manufacturing.activity.ResumeCast;
 import manufacturing.entity.CastingStation;
 import manufacturing.entity.IOArea;
 import manufacturing.entity.LoadUnload;
@@ -159,12 +157,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
             scheduleActivity(act);
             statusChanged = true;
         }
-        if (CastBeforeFailure.precondition(this) == true) {
-            CastBeforeFailure act = new CastBeforeFailure(this);
-            act.startingEvent();
-            scheduleActivity(act);
-            statusChanged = true;
-        }
         if (DoStationWork.precondition(this) == true) {
             DoStationWork act = new DoStationWork(this);
             act.startingEvent();
@@ -179,12 +171,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         }
         if (Repair.precondition(this) == true) {
             Repair act = new Repair(this);
-            act.startingEvent();
-            scheduleActivity(act);
-            statusChanged = true;
-        }
-        if (ResumeCast.precondition(this) == true) {
-            ResumeCast act = new ResumeCast(this);
             act.startingEvent();
             scheduleActivity(act);
             statusChanged = true;
@@ -208,8 +194,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         for (int i = 0; i < numCastingStation; i++) {
             CastingStation station = rcCastingStations[i];
             System.out.println("      " + i + ".busy: " + station.busy + ", timeToFailure: " + station.timeToFailure +
-                    ", castingTimeLeft: " + station.castingTimeLeft + ", isSuspended: " + station.isSuspended +
-                    ", planeType: " + station.planeType);
+                    ", castingTimeLeft: " + station.castingTimeLeft + ", planeType: " + station.planeType);
         }
 
         String[] stationLabel = new String[] {"CAST", "CUT_GRIND", "COAT", "INSPECT_PACK"};
