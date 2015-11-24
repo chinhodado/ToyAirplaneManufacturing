@@ -30,7 +30,7 @@ public class LoadUnload {
      * @return
      */
     public int spRemoveQue() {
-        Integer moverId = Constants.NO_MOVER;
+        Integer moverId = Constants.NONE;
         if (moverList.size() != 0)
             moverId = moverList.remove(0);
         return moverId;

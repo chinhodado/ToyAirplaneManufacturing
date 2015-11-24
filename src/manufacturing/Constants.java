@@ -17,5 +17,4 @@ public class Constants {
 
     public static final int NONE = -1;
     public static final Bin NO_BIN = null;
-    public static final int NO_MOVER = -1;
 }
