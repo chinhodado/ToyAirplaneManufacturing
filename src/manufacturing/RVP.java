@@ -18,8 +18,8 @@ public class RVP {
     TriangularVariate cutTime;
 
     // grinding time
-    final double G_MEAN_TIME    = 0.241;
-    final double G_STV_DEV_TIME = 0.045;
+    final double G_MEAN_TIME    = 0.233;
+    final double G_STV_DEV_TIME = 0.016;
     Normal grindTime;
 
     // inspection/packaging time
