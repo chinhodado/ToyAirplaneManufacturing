@@ -52,5 +52,11 @@ public class MovePlanes extends Activity {
 
     @Override
     public void terminatingEvent() {
+        if (stationType != Constants.INSPECT_PACK) {
+            model.qLoadUnload[Constants.IN][nextStationType].spInsertQue(moverId);
+        }
+        else {
+            model.qLoadUnload[Constants.OUT][nextStationType].spInsertQue(moverId);
+        }
     }
 }

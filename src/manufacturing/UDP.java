@@ -261,13 +261,6 @@ public class UDP {
             break;
         }
 
-        if (currentStationType != Constants.INSPECT_PACK) {
-            model.qLoadUnload[Constants.IN][nextStationType].spInsertQue(moverId);
-        }
-        else {
-            model.qLoadUnload[Constants.OUT][nextStationType].spInsertQue(moverId);
-        }
-
         return nextStationType;
     }
 }
