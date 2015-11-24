@@ -76,19 +76,26 @@ public class UDP {
      */
     public int[] GetOutputAreaWithBin() {
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
+            // the stationId of the station with an output area that has the most bins,
+            int stationIdWithMaxOutput = 0;
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                int moverId = GetMoverReadyForLoad(stationType);
-                if (model.qIOAreas[Constants.OUT][stationType][stationId].getN() > 0 &&
-                    moverId != Constants.NONE) {
-                    return new int[] {stationType, stationId, moverId};
+                IOArea currentOutputArea = model.qIOAreas[Constants.OUT][stationType][stationId];
+                IOArea currentMaxOutputArea = model.qIOAreas[Constants.OUT][stationType][stationIdWithMaxOutput];
+                if (currentOutputArea.getN() > currentMaxOutputArea.getN()) {
+                    stationIdWithMaxOutput = stationId;
                 }
+            }
+            int moverId = GetMoverReadyForLoad(stationType);
+            if (model.qIOAreas[Constants.OUT][stationType][stationIdWithMaxOutput].getN() > 0 &&
+                moverId != Constants.NONE) {
+                return new int[] {stationType, stationIdWithMaxOutput, moverId};
             }
         }
         return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
     }
 
     /**
-     * Load a bin from an output area into a mover's trolley
+     * Load a bin from an output area into a mover's trolley, one at a time
      * @param moverId The id of the mover
      * @param stationType The station type
      * @param stationId The station ID
@@ -97,14 +104,16 @@ public class UDP {
         Mover mover = model.rgMovers[moverId];
         IOArea outputArea = model.qIOAreas[Constants.OUT][stationType][stationId];
         int numEmptySlots = Mover.MAX_NUM_BIN - mover.getN();
+        boolean doneLoading = false;
         for (Bin bin : new ArrayList<Bin>(outputArea.binList)) { // clone-and-remove trick
-            if (numEmptySlots <= 0) {
+            if (numEmptySlots <= 0 || doneLoading) {
                 break;
             }
             else {
                 mover.binList.add(bin);
                 outputArea.binList.remove(bin);
                 numEmptySlots--;
+                doneLoading = true;
             }
         }
     }
