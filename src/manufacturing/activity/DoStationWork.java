@@ -11,6 +11,7 @@ import simulationModelling.Activity;
  */
 public class DoStationWork extends Activity {
     ToyAirplaneManufacturing model;
+    Station station;
     int stationType;
     int stationId;
 
@@ -36,8 +37,9 @@ public class DoStationWork extends Activity {
         this.name = "S" + stationType + "_" + stationId;
 
         // Set station to busy and move bin from input area to station
-        model.rgStations[stationType][stationId].busy = true;
-        model.rgStations[stationType][stationId].bin = model.qIOAreas[Constants.IN][stationType][stationId].spRemoveQue();
+        station = model.rgStations[stationType][stationId];
+        station.busy = true;
+        station.bin = model.qIOAreas[Constants.IN][stationType][stationId].spRemoveQue();
     }
 
     @Override
@@ -47,7 +49,6 @@ public class DoStationWork extends Activity {
 
     @Override
     public void terminatingEvent() {
-        Station station = model.rgStations[stationType][stationId];
         station.busy = false;
 
         if (stationType == Constants.INSPECT_PACK) {

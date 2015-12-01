@@ -103,6 +103,8 @@ public class UDP {
     public void LoadBin(int moverId, int stationType, int stationId) {
         Mover mover = model.rgMovers[moverId];
         IOArea outputArea = model.qIOAreas[Constants.OUT][stationType][stationId];
+        // this is just to be safe - if we are in here it means that we got a valid moverId
+        // from GetMoverReadyForLoad already
         int numEmptySlots = Mover.MAX_NUM_BIN - mover.getN();
         boolean doneLoading = false;
         for (Bin bin : new ArrayList<Bin>(outputArea.binList)) { // clone-and-remove trick
