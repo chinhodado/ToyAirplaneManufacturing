@@ -171,7 +171,8 @@ public class UDP {
             CastingStation station = model.rcCastingStations[stationId];
             if (!station.busy &&
                 station.timeToFailure != 0 &&
-                (station.bin == Constants.NO_BIN || (station.bin != Constants.NO_BIN && station.castingTimeLeft > 0))) {
+                ((station.bin == Constants.NO_BIN && model.castingsCreated[station.planeType] < Constants.NUM_CASTING_NEEDED[station.planeType]) ||
+                 (station.bin != Constants.NO_BIN && station.castingTimeLeft > 0))) {
                 return stationId;
             }
         }
