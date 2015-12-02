@@ -75,19 +75,19 @@ public class Experiment {
                 if (!foundFinalNumCastingStations) {
                     foundFinalNumCastingStations = true;
                     System.out.println("Final number of casting stations found. Searching for optimal number of cutting/grinding stations.");
-                    numCuttingGrindingStation = 1;
+                    numCuttingGrindingStation = 6;
                     continue;
                 }
                 else if (!foundFinalNumCuttingGrindingStations) {
                     foundFinalNumCuttingGrindingStations = true;
                     System.out.println("Final number of cutting/grinding stations found. Searching for optimal number of coating stations.");
-                    numCoatingStation = 1;
+                    numCoatingStation = 6;
                     continue;
                 }
                 else if (!foundFinalNumCoatingStations) {
                     foundFinalNumCoatingStations = true;
                     System.out.println("Final number of coating stations found. Searching for optimal number of inspection/packaging stations.");
-                    numInspectionPackagingStation = 1;
+                    numInspectionPackagingStation = 4;
                     continue;
                 }
                 else if (!foundFinalNumInspectionPackagingStations) {
