@@ -29,7 +29,7 @@ public class RVP {
     TriangularVariate inspectPackTime;
 
     // time to failure
-    final double MEAN_TIME_BETWEEN_FAILURE = 30;
+    final double MEAN_TIME_BETWEEN_FAILURE = 60;
     Exponential failureTime;
 
     // repair time
