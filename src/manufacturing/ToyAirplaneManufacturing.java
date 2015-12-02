@@ -251,7 +251,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     protected void printDebug() {
         // Debugging
         System.out.printf("Clock = %10.4f\n", getClock());
-        showSBL();
 
         // Casting stations
         System.out.println("   CAST:");
@@ -259,8 +258,8 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         String[] planeLabel = new String[] {"F16", "Concorde", "Spitfire"};
         for (int i = 0; i < numCastingStation; i++) {
             CastingStation station = rcCastingStations[i];
-            System.out.println("         " + i + ".busy: " + station.busy + ", timeToFailure: " + station.timeToFailure +
-                    ", castingTimeLeft: " + station.castingTimeLeft + ", planeType: " + planeLabel[station.planeType]);
+            System.out.println("         " + i + ".busy: " + station.busy + ", timeToFailure: " + String.format( "%.2f", station.timeToFailure) +
+                    ", castingTimeLeft: " + String.format( "%.2f", station.castingTimeLeft) + ", planeType: " + planeLabel[station.planeType]);
         }
 
         // casting output areas
@@ -327,5 +326,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
                 System.out.println();
             }
         }
+        showSBL();
     }
 }

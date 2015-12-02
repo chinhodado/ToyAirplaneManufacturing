@@ -41,7 +41,7 @@ public class Experiment {
             int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
                     numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
                     numInspectionPackagingStation};
-            System.out.println("==================New run with modified parameter: " + Arrays.toString(params) + "===================");
+            System.out.println("==================New run with parameters: " + Arrays.toString(params) + "===================");
 
             double meanNumConcordeProducedDaily = 0, meanNumF16ProducedDaily = 0, meanNumSpitfireProducedDaily = 0;
             for (i = 0; i < NUMRUNS; i++) {
