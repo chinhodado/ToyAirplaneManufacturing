@@ -2,7 +2,6 @@ package manufacturing.action;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.Util;
 import manufacturing.entity.CastingStation;
 import manufacturing.entity.Station;
 import simulationModelling.ConditionalAction;
@@ -26,8 +25,7 @@ public class PutInOutputArea extends ConditionalAction {
         int[] ids = model.udp.GetReadyOutputArea();
         int stationType = ids[0];
         int stationId = ids[1];
-        Util.logVerbose("PutInOutputArea[" + stationType + ", " + stationId + "]");
-
+        this.name = Constants.stationLabel[stationType] + "_" + stationId;
         if (stationType != Constants.CAST) {
             Station station = model.rgStations[stationType][stationId];
             model.qIOAreas[Constants.OUT][stationType][stationId].spInsertQue(station.bin);

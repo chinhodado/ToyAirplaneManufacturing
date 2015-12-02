@@ -2,7 +2,6 @@ package manufacturing.activity;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.Util;
 import manufacturing.entity.CastingStation;
 import simulationModelling.Activity;
 
@@ -26,9 +25,7 @@ public class Repair extends Activity {
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForRepair();
-        Util.logVerbose("Repair.startingEvent[" + stationId + "]");
-
-        this.name = "C" + stationId;
+        this.name = "Casting" + stationId;
         model.rMaintenancePerson.busy = true;
     }
 

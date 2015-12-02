@@ -2,7 +2,6 @@ package manufacturing.action;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.Util;
 import simulationModelling.ConditionalAction;
 
 /**
@@ -25,8 +24,7 @@ public class LoadBin extends ConditionalAction {
         int stationType = ids[0];
         int stationId = ids[1];
         int moverId = ids[2];
-        Util.logVerbose("LoadBin[" + stationType + ", " + stationId + "]");
-
+        this.name = Constants.stationLabel[stationType] + "_" + stationId;
         model.udp.LoadBin(moverId, stationType, stationId);
     }
 }

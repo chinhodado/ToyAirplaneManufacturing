@@ -6,7 +6,6 @@ import java.util.Collections;
 import cern.jet.random.engine.RandomSeedGenerator;
 import manufacturing.Seeds;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.Util;
 
 public class Experiment {
     /**
@@ -42,7 +41,7 @@ public class Experiment {
             int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
                     numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
                     numInspectionPackagingStation};
-            Util.logDetail("==================New run with modified parameter: " + Arrays.toString(params) + "===================");
+            System.out.println("==================New run with modified parameter: " + Arrays.toString(params) + "===================");
 
             double meanNumConcordeProducedDaily = 0, meanNumF16ProducedDaily = 0, meanNumSpitfireProducedDaily = 0;
             for (i = 0; i < NUMRUNS; i++) {
@@ -61,11 +60,11 @@ public class Experiment {
             double percentConcordeProduced = (double)meanNumConcordeProducedDaily / 2340;
             double percentF16Produced = (double)meanNumF16ProducedDaily / 1950;
             double percentSpitfireProduced = (double)meanNumSpitfireProducedDaily / 1300;
-            Util.logDetail("Num F16 produced: " + meanNumF16ProducedDaily +
+            System.out.println("Num F16 produced: " + meanNumF16ProducedDaily +
                     "(" + String.format( "%.2f", percentF16Produced * 100) + "%)");
-            Util.logDetail("Num Concorde produced: " + meanNumConcordeProducedDaily +
+            System.out.println("Num Concorde produced: " + meanNumConcordeProducedDaily +
                     "(" + String.format( "%.2f", percentConcordeProduced * 100) + "%)");
-            Util.logDetail("Num Spitfire produced: " + meanNumSpitfireProducedDaily +
+            System.out.println("Num Spitfire produced: " + meanNumSpitfireProducedDaily +
                     "(" + String.format( "%.2f", percentSpitfireProduced * 100) + "%)");
 
             if (meanNumConcordeProducedDaily >= 2340 &&
@@ -114,15 +113,15 @@ public class Experiment {
 
             if (!foundFinalNumCastingStations) {
                 if (minProducedPercent == percentConcordeProduced) {
-                    Util.logDetail("Adding 1 Concorde casting station");
+                    System.out.println("Adding 1 Concorde casting station");
                     numConcordeCastingStation++;
                 }
                 else if (minProducedPercent == percentF16Produced){
-                    Util.logDetail("Adding 1 F16 casting station");
+                    System.out.println("Adding 1 F16 casting station");
                     numF16CastingStation++;
                 }
                 else if (minProducedPercent == percentSpitfireProduced) {
-                    Util.logDetail("Adding 1 Spitfire casting station");
+                    System.out.println("Adding 1 Spitfire casting station");
                     numSpitfireCastingStation++;
                 }
             }

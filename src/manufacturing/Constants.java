@@ -20,4 +20,7 @@ public class Constants {
 
     public static final int NONE = -1;
     public static final Bin NO_BIN = null;
+
+    // useful for loggings
+    public static String[] stationLabel = new String[] {"CAST", "CUT_GRIND", "COAT", "INSPECT_PACK"};
 }

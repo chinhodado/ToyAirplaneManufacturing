@@ -238,6 +238,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
             }
         }
 
+        System.out.println("Current time at ending: " + getClock());
         return true;
     }
 
@@ -250,6 +251,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     protected void printDebug() {
         // Debugging
         System.out.printf("Clock = %10.4f\n", getClock());
+        showSBL();
 
         // Casting stations
         System.out.println("   CAST:");

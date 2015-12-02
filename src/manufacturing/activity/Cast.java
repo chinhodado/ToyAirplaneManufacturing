@@ -2,7 +2,6 @@ package manufacturing.activity;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.Util;
 import manufacturing.entity.Bin;
 import manufacturing.entity.CastingStation;
 import simulationModelling.Activity;
@@ -28,8 +27,7 @@ public class Cast extends Activity {
     @Override
     public void startingEvent() {
         stationId = model.udp.StationReadyForCasting();
-        Util.logVerbose("Cast.startingEvent[" + stationId + "]");
-        this.name = "C" + stationId;
+        this.name = "Casting" + stationId;
         station = model.rcCastingStations[stationId];
         station.busy = true;
 
@@ -62,7 +60,6 @@ public class Cast extends Activity {
 
     @Override
     protected void terminatingEvent() {
-        Util.logVerbose("Cast.terminatingEvent[" + stationId + "]");
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
 
