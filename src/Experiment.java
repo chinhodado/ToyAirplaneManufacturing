@@ -2,10 +2,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 
 import cern.jet.random.engine.RandomSeedGenerator;
-import manufacturing.Constants;
 import manufacturing.Seeds;
 import manufacturing.ToyAirplaneManufacturing;
 import manufacturing.Util;
@@ -15,7 +13,7 @@ public class Experiment {
      * @param args
      */
     public static void main(String[] args) {
-        int i, NUMRUNS = 40;
+        int i, NUMRUNS = 5;
         double endTime = 8 * 60; // run for 8 hours
         Seeds[] sds = new Seeds[NUMRUNS];
         ToyAirplaneManufacturing model = null; // Simulation object
@@ -25,53 +23,84 @@ public class Experiment {
         for (i = 0; i < NUMRUNS; i++)
             sds[i] = new Seeds(rsg);
 
+        boolean foundFinalNumCastingStations = false,
+                foundFinalNumCuttingGrindingStations = false,
+                foundFinalNumCoatingStations = false,
+                foundFinalNumInspectionPackagingStations = false,
+                foundFinalNumMover = false;
+
         // Loop for NUMRUN simulation runs for each case
-        int numMover = 50,
+        int numMover = 20,
             numF16CastingStation = 3,
             numConcordeCastingStation = 3,
             numSpitfireCastingStation = 2,
-            numCuttingGrindingStation = 1,
-            numCoatingStation = 1,
-            numInspectionPackagingStation = 1;
-
-        double meanCastingBlockedTime = 0, meanCutGringBlockedTime = 0, meanCoatBlockedTime = 0, meanInspectPackBlockedTime = 0;
+            numCuttingGrindingStation = 20,
+            numCoatingStation = 20,
+            numInspectionPackagingStation = 20;
 
         while (true) {
-            Util.logDetail("==================New run with modified parameter===================");
             int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
                     numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
                     numInspectionPackagingStation};
-            System.out.println(Arrays.toString(params));
+            Util.logDetail("==================New run with modified parameter: " + Arrays.toString(params) + "===================");
+
+            double meanNumConcordeProducedDaily = 0, meanNumF16ProducedDaily = 0, meanNumSpitfireProducedDaily = 0;
             for (i = 0; i < NUMRUNS; i++) {
-                model = new ToyAirplaneManufacturing(endTime, params, sds[i], true);
+                model = new ToyAirplaneManufacturing(endTime, params, sds[i], false);
                 model.runSimulation();
 
-                meanCastingBlockedTime += model.getPercentTimeCastingStationBlocked();
-                meanCutGringBlockedTime += model.getPercentTimeStationBlocked(Constants.CUT_GRIND);
-                meanCoatBlockedTime += model.getPercentTimeStationBlocked(Constants.COAT);
-                meanInspectPackBlockedTime += model.getPercentTimeStationBlocked(Constants.INSPECT_PACK);
+                meanNumConcordeProducedDaily += model.getNumConcordeProduced();
+                meanNumF16ProducedDaily      += model.getNumF16Produced();
+                meanNumSpitfireProducedDaily += model.getNumSpitfireProduced();
             }
 
-            meanCastingBlockedTime /= NUMRUNS;
-            meanCutGringBlockedTime /= NUMRUNS;
-            meanCoatBlockedTime /= NUMRUNS;
-            meanInspectPackBlockedTime /= NUMRUNS;
+            meanNumConcordeProducedDaily /= NUMRUNS;
+            meanNumF16ProducedDaily /= NUMRUNS;
+            meanNumSpitfireProducedDaily /= NUMRUNS;
 
-            double percentConcordeProduced = (double)model.output.numConcordeProducedDaily / 2340;
-            double percentF16Produced = (double)model.output.numF16ProducedDaily / 1950;
-            double percentSpitfireProduced = (double)model.output.numSpitfireProducedDaily / 1300;
-            Util.logDetail("Num F16 produced: " + model.output.numF16ProducedDaily +
-                    "(" + percentF16Produced * 100 + "%)");
-            Util.logDetail("Num Concorde produced: " + model.output.numConcordeProducedDaily +
-                    "(" + percentConcordeProduced * 100 + "%)");
-            Util.logDetail("Num Spitfire produced: " + model.output.numSpitfireProducedDaily +
-                    "(" + percentSpitfireProduced * 100 + "%)");
+            double percentConcordeProduced = (double)meanNumConcordeProducedDaily / 2340;
+            double percentF16Produced = (double)meanNumF16ProducedDaily / 1950;
+            double percentSpitfireProduced = (double)meanNumSpitfireProducedDaily / 1300;
+            Util.logDetail("Num F16 produced: " + meanNumF16ProducedDaily +
+                    "(" + String.format( "%.2f", percentF16Produced * 100) + "%)");
+            Util.logDetail("Num Concorde produced: " + meanNumConcordeProducedDaily +
+                    "(" + String.format( "%.2f", percentConcordeProduced * 100) + "%)");
+            Util.logDetail("Num Spitfire produced: " + meanNumSpitfireProducedDaily +
+                    "(" + String.format( "%.2f", percentSpitfireProduced * 100) + "%)");
 
-            if (model.output.numConcordeProducedDaily >= 2340 &&
-                model.output.numF16ProducedDaily >= 1950 &&
-                model.output.numSpitfireProducedDaily >= 1300) {
-                System.out.println("Output reached! Simulation completed.");
-                break;
+            if (meanNumConcordeProducedDaily >= 2340 &&
+                meanNumF16ProducedDaily >= 1950 &&
+                meanNumSpitfireProducedDaily >= 1300) {
+
+                if (!foundFinalNumCastingStations) {
+                    foundFinalNumCastingStations = true;
+                    System.out.println("Final number of casting stations found. Searching for optimal number of cutting/grinding stations.");
+                    numCuttingGrindingStation = 1;
+                    continue;
+                }
+                else if (!foundFinalNumCuttingGrindingStations) {
+                    foundFinalNumCuttingGrindingStations = true;
+                    System.out.println("Final number of cutting/grinding stations found. Searching for optimal number of coating stations.");
+                    numCoatingStation = 1;
+                    continue;
+                }
+                else if (!foundFinalNumCoatingStations) {
+                    foundFinalNumCoatingStations = true;
+                    System.out.println("Final number of coating stations found. Searching for optimal number of inspection/packaging stations.");
+                    numInspectionPackagingStation = 1;
+                    continue;
+                }
+                else if (!foundFinalNumInspectionPackagingStations) {
+                    foundFinalNumInspectionPackagingStations = true;
+                    System.out.println("Final number of inspection/packaging stations found. Searching for optimal number of movers.");
+                    numMover = 1;
+                    continue;
+                }
+                else if (!foundFinalNumMover) {
+                    foundFinalNumMover = true;
+                    System.out.println("Output reached! Simulation completed.");
+                    break;
+                }
             }
 
             int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
@@ -83,23 +112,7 @@ public class Experiment {
             double minProducedPercent = Collections.min(new ArrayList<Double>(
                     Arrays.asList(percentConcordeProduced, percentF16Produced, percentSpitfireProduced)));
 
-            ArrayList<Double[]> maxBlockTimeList = new ArrayList<Double[]>();
-            if (numCastingStation < 20) maxBlockTimeList.add(new Double[] { meanCastingBlockedTime, (double) Constants.CAST });
-            if (numCuttingGrindingStation < 20) maxBlockTimeList.add(new Double[] { meanCutGringBlockedTime, (double) Constants.CUT_GRIND });
-            if (numCoatingStation < 20) maxBlockTimeList.add(new Double[] { meanCoatBlockedTime, (double) Constants.COAT });
-            if (numInspectionPackagingStation < 20) maxBlockTimeList.add(new Double[] { meanInspectPackBlockedTime, (double) Constants.INSPECT_PACK });
-
-            Collections.sort(maxBlockTimeList, new Comparator<Double[]>() {
-                @Override
-                public int compare(Double[] o1, Double[] o2) {
-                    return Double.compare(o2[0], o1[0]);
-                }
-
-            });
-
-            int mostBlockedStation = maxBlockTimeList.get(0)[1].intValue();
-
-            if (mostBlockedStation == Constants.CAST) {
+            if (!foundFinalNumCastingStations) {
                 if (minProducedPercent == percentConcordeProduced) {
                     Util.logDetail("Adding 1 Concorde casting station");
                     numConcordeCastingStation++;
@@ -113,17 +126,17 @@ public class Experiment {
                     numSpitfireCastingStation++;
                 }
             }
-            else if (mostBlockedStation == Constants.CUT_GRIND) {
-                Util.logDetail("Adding 1 cutting/grinding station");
+            else if (!foundFinalNumCuttingGrindingStations) {
                 numCuttingGrindingStation++;
             }
-            else if (mostBlockedStation == Constants.COAT) {
-                Util.logDetail("Adding 1 coating station");
+            else if (!foundFinalNumCoatingStations) {
                 numCoatingStation++;
             }
-            else if (mostBlockedStation == Constants.INSPECT_PACK) {
-                Util.logDetail("Adding 1 inspection/packaging station");
+            else if (!foundFinalNumInspectionPackagingStations) {
                 numInspectionPackagingStation++;
+            }
+            else if (!foundFinalNumMover) {
+                numMover++;
             }
         }
     }

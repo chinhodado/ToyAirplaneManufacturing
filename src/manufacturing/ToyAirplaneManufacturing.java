@@ -51,13 +51,17 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     // for Debugging
     boolean logFlag = false;
 
-    // DSOVs
-    public double getPercentTimeCastingStationBlocked() {
-        return output.percentTimeCastingStationBlocked();
+    // SSOVs
+    public double getNumF16Produced() {
+        return output.numF16ProducedDaily;
     }
 
-    public double getPercentTimeStationBlocked(int stationType) {
-        return output.percentTimeStationBlocked(stationType);
+    public double getNumConcordeProduced() {
+        return output.numConcordeProducedDaily;
+    }
+
+    public double getNumSpitfireProduced() {
+        return output.numSpitfireProducedDaily;
     }
 
     // for keeping track of number of casting created for each type of planes
@@ -239,7 +243,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
 
     @Override
     public void eventOccured() {
-        output.updateSequences(); // for updating trajectory sets
         if (logFlag)
             printDebug();
     }
