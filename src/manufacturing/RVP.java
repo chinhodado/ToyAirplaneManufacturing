@@ -8,8 +8,8 @@ import dataModelling.TriangularVariate;
 public class RVP {
     ToyAirplaneManufacturing model;
 
-    final double CASTING_TIME = 3;
-    final double COATING_TIME = 12;
+    public final double CASTING_TIME = 3;
+    public final double COATING_TIME = 12;
 
     // cutting time
     final double CU_MIN_TIME = 0.25;

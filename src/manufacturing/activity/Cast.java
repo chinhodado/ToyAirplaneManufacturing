@@ -12,10 +12,10 @@ import simulationModelling.Activity;
  *
  */
 public class Cast extends Activity {
-    ToyAirplaneManufacturing model;
-    CastingStation station;
-    int stationId;
-    double duration;
+    private ToyAirplaneManufacturing model;
+    private CastingStation station;
+    private int stationId;
+    private double duration;
 
     public Cast(ToyAirplaneManufacturing model) {
         this.model = model;
@@ -32,13 +32,12 @@ public class Cast extends Activity {
         station = model.rcCastingStations[stationId];
         station.busy = true;
 
-        if (station.castingTimeLeft > 0) {
-            // resuming from an interrupted casting - nothing else to be done
-        }
-        else {
-            // a new casting session
+        if (!(station.castingTimeLeft > 0)) {
+            // a new casting session. Each casting session produces 4 castings
             station.bin = new Bin();
         }
+        // otherwise we're resuming from an interrupted casting session - we already have a bin,
+        // don't have to create a new one
 
         double wouldBeTime;
         if (station.castingTimeLeft > 0) {
@@ -66,25 +65,31 @@ public class Cast extends Activity {
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
 
-        if (station.castingTimeLeft > 0) { // resume from an interrupted cast
-            // done with the casting
+        // resume from an interrupted casting session (i.e. not all 4 castings have been made yet)
+        if (station.castingTimeLeft > 0) {
+            // done with the casting session
             if (station.castingTimeLeft == duration) {
                 station.bin.planeType = station.planeType;
                 model.castingsCreated[station.planeType] += 4;
             }
             // if castingTimeLeft > duration, that means interrupted again - this machine sure breaks down a lot...
-            // either way, reduce casting timeLeft by duration (will be reduced to 0 if the casting is completed)
+            // either way, reduce castingTimeLeft by duration and add the wasted time (will be reduced to 0 if the casting session is completed)
             if (station.castingTimeLeft >= duration) {
-                station.castingTimeLeft -= duration;
+                // the time wasted on doing a casting that will have to be re-done
+                double wastedTime = duration % model.rvp.CASTING_TIME;
+                station.castingTimeLeft = station.castingTimeLeft - duration + wastedTime;
             }
             // can't be <, that wouldn't make sense
         }
-        else { // new cast
-            // new cast is not done, machine is broken midway
+        else { // new casting session
+            // new casting session is not done, machine is broken midway
             if (duration < model.rvp.uStationWorkTime(Constants.CAST)) {
-                station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST) - duration;
+                // the time wasted on doing a casting that will have to be re-done
+                double wastedTime = duration % model.rvp.CASTING_TIME;
+                station.castingTimeLeft = model.rvp.uStationWorkTime(Constants.CAST)
+                        - duration + wastedTime;
             }
-            // new cast is done
+            // new casting session is done
             else if (duration == model.rvp.uStationWorkTime(Constants.CAST)) {
                 station.bin.planeType = station.planeType;
                 model.castingsCreated[station.planeType] += 4;
