@@ -15,6 +15,7 @@ public class Cast extends Activity {
     ToyAirplaneManufacturing model;
     CastingStation station;
     int stationId;
+    double duration;
 
     public Cast(ToyAirplaneManufacturing model) {
         this.model = model;
@@ -38,10 +39,7 @@ public class Cast extends Activity {
             // a new casting session
             station.bin = new Bin();
         }
-    }
 
-    @Override
-    protected double duration() {
         double wouldBeTime;
         if (station.castingTimeLeft > 0) {
             wouldBeTime = station.castingTimeLeft;
@@ -51,11 +49,16 @@ public class Cast extends Activity {
         }
 
         if (wouldBeTime > station.timeToFailure) {
-            return station.timeToFailure;
+            duration = station.timeToFailure;
         }
         else {
-            return wouldBeTime;
+            duration = wouldBeTime;
         }
+    }
+
+    @Override
+    protected double duration() {
+        return duration;
     }
 
     @Override
@@ -63,7 +66,6 @@ public class Cast extends Activity {
         CastingStation station = model.rcCastingStations[stationId];
         station.busy = false;
 
-        double duration = duration();
         if (station.castingTimeLeft > 0) { // resume from an interrupted cast
             // done with the casting
             if (station.castingTimeLeft == duration) {
