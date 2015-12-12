@@ -12,6 +12,7 @@ import manufacturing.entity.IOArea;
 import manufacturing.entity.LoadUnload;
 import manufacturing.entity.MaintenancePerson;
 import manufacturing.entity.Mover;
+import manufacturing.entity.RepairQueue;
 import manufacturing.entity.Station;
 import simulationModelling.AOSimulationModel;
 import simulationModelling.Behaviour;
@@ -26,6 +27,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
      */
     public IOArea[][][] qIOAreas;
 
+    public RepairQueue qRepairQueue;
     public LoadUnload[][] qLoadUnload;
     public Mover[] rgMovers;
     public MaintenancePerson rMaintenancePerson;
@@ -108,6 +110,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
 
         rcCastingStations = new CastingStation[numCastingStation];
 
+        qRepairQueue = new RepairQueue();
         qIOAreas = new IOArea[2][4][];
         qLoadUnload = new LoadUnload[2][4];
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {

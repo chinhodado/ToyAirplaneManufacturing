@@ -90,5 +90,9 @@ public class Cast extends Activity {
             // can't be >, wouldn't make sense (duration must be <= casting time, always)
         }
         station.timeToFailure -= duration;
+
+        if (station.timeToFailure == 0) {
+            model.qRepairQueue.spInsertQue(stationId);
+        }
     }
 }

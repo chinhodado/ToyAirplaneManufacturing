@@ -180,17 +180,6 @@ public class UDP {
         return Constants.NONE;
     }
 
-    public int StationReadyForRepair() {
-        for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
-            CastingStation station = model.rcCastingStations[stationId];
-            if (station.timeToFailure == 0) {
-                return stationId;
-            }
-        }
-
-        return Constants.NONE;
-    }
-
     /**
      * Get the id and station type of a station that is ready for work
      * @return [stationType, stationId] of a station that is ready for work,

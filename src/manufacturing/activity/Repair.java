@@ -1,6 +1,5 @@
 package manufacturing.activity;
 
-import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
 import manufacturing.entity.CastingStation;
 import simulationModelling.Activity;
@@ -18,13 +17,13 @@ public class Repair extends Activity {
     }
 
     public static boolean precondition(ToyAirplaneManufacturing model) {
-        return model.udp.StationReadyForRepair() != Constants.NONE &&
+        return model.qRepairQueue.getN() > 0 &&
                 !model.rMaintenancePerson.busy;
     }
 
     @Override
     public void startingEvent() {
-        stationId = model.udp.StationReadyForRepair();
+        stationId = model.qRepairQueue.spRemoveQue();
         this.name = "Casting" + stationId;
         model.rMaintenancePerson.busy = true;
     }
