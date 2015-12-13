@@ -42,10 +42,15 @@ public class Experiment {
                     numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
                     numInspectionPackagingStation};
             System.out.println("==================New run with parameters: " + Arrays.toString(params) + "===================");
+            int[] numCastingStations = new int[] {numF16CastingStation, numConcordeCastingStation,
+                    numSpitfireCastingStation};
+            int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
+            int[] numStations = new int[] { numCastingStation, numCuttingGrindingStation, numCoatingStation,
+                    numInspectionPackagingStation};
 
             double meanNumConcordeProducedDaily = 0, meanNumF16ProducedDaily = 0, meanNumSpitfireProducedDaily = 0;
             for (i = 0; i < NUMRUNS; i++) {
-                model = new ToyAirplaneManufacturing(endTime, params, sds[i], false);
+                model = new ToyAirplaneManufacturing(endTime, numMover, numCastingStations, numStations, sds[i], false);
                 model.runSimulation();
 
                 meanNumConcordeProducedDaily += model.getNumConcordeProduced();
@@ -102,7 +107,6 @@ public class Experiment {
                 }
             }
 
-            int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
             if (numCastingStation == 20 && numCuttingGrindingStation == 20 && numCoatingStation == 20 && numInspectionPackagingStation == 20) {
                 System.out.println("Every station is at maximum and output is not reached. Something went horribly wrong...");
                 break;

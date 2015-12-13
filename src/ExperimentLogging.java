@@ -31,10 +31,15 @@ public class ExperimentLogging {
                 numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
                 numInspectionPackagingStation};
         System.out.println("==================New run with parameters: " + Arrays.toString(params) + "===================");
+        int[] numCastingStations = new int[] {numF16CastingStation, numConcordeCastingStation,
+                numSpitfireCastingStation};
+        int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
+        int[] numStations = new int[] { numCastingStation, numCuttingGrindingStation, numCoatingStation,
+                numInspectionPackagingStation};
 
         double meanNumConcordeProducedDaily = 0, meanNumF16ProducedDaily = 0, meanNumSpitfireProducedDaily = 0;
         for (i = 0; i < NUMRUNS; i++) {
-            model = new ToyAirplaneManufacturing(endTime, params, sds[i], true);
+            model = new ToyAirplaneManufacturing(endTime, numMover, numCastingStations, numStations, sds[i], true);
             model.runSimulation();
 
             meanNumConcordeProducedDaily += model.getNumConcordeProduced();

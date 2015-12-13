@@ -28,12 +28,14 @@ public class ExperimentAnalysis {
             numCoatingStation = 6,
             numInspectionPackagingStation = 5;
 
-        int[] params = new int[] { numMover, numF16CastingStation, numConcordeCastingStation,
-                numSpitfireCastingStation, numCuttingGrindingStation, numCoatingStation,
+        int[] numCastingStations = new int[] {numF16CastingStation, numConcordeCastingStation,
+                numSpitfireCastingStation};
+        int numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
+        int[] numStations = new int[] { numCastingStation, numCuttingGrindingStation, numCoatingStation,
                 numInspectionPackagingStation};
 
         for (i = 0; i < NUMRUNS; i++) {
-            model = new ToyAirplaneManufacturing(endTime, params, sds[i], false);
+            model = new ToyAirplaneManufacturing(endTime, numMover, numCastingStations, numStations, sds[i], false);
             model.runSimulation();
 
             valuesConcordeCase1[i] = model.getNumConcordeProduced();

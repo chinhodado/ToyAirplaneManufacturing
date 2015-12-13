@@ -35,13 +35,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
 
     // Parameters
     public int numMover;
-    public int numF16CastingStation;
-    public int numConcordeCastingStation;
-    public int numSpitfireCastingStation;
-    public int numCuttingGrindingStation;
-    public int numCoatingStation;
-    public int numInspectionPackagingStation;
-    public int numCastingStation; // total number of casting stations
+    public int[] numCastingStations;
     public int[] numStations;
 
     // Random Variate Procedures
@@ -76,15 +70,14 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
 
     /**
      * Constructor
-     * @param tftime The end time (???)
-     * @param params An array of parameters containing (0)numMover, (1)numF16CastingStation,
-     *               (2)numConcordeCastingStation, (3)numSpitfireCastingStation,
-     *               (4)numCuttingGrindingStation, (5)numCoatingStation and (6)numInspectionPackagingStation
-     *               in that order
+     * @param tftime The end time
+     * @param numMover number of movers
+     * @param numCastingStations number of F16, Concorde and Spitfire casting stations
+     * @param numStations number of casting stations, numCuttingGrindingStation, numCoatingStation and numInspectionPackagingStation
      * @param sd     Seeds used
      * @param log    log
      */
-    public ToyAirplaneManufacturing(double tftime, int[] params, Seeds sd, boolean log) {
+    public ToyAirplaneManufacturing(double tftime, int numMover, int[] numCastingStations, int[] numStations, Seeds sd, boolean log) {
         // For turning on logging
         logFlag = log;
 
@@ -92,28 +85,16 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         rvp = new RVP(this, sd);
 
         // Initialize parameters
-        numMover = params[0];
-
-        numF16CastingStation = params[1];
-        numConcordeCastingStation = params[2];
-        numSpitfireCastingStation = params[3];
-
-        numCuttingGrindingStation = params[4];
-        numCoatingStation = params[5];
-        numInspectionPackagingStation = params[6];
-
-        numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
-
-        // number of different types of stations - useful for use in loops, etc.
-        numStations = new int[] { numCastingStation, numCuttingGrindingStation,
-                numCoatingStation, numInspectionPackagingStation };
+        this.numMover = numMover;
+        this.numCastingStations = numCastingStations;
+        this.numStations = numStations;
 
         rgStations = new Station[4][]; // the first array is not used
-        rgStations[Constants.CUT_GRIND] = new Station[numCuttingGrindingStation];
-        rgStations[Constants.COAT] = new Station[numCoatingStation];
-        rgStations[Constants.INSPECT_PACK] = new Station[numInspectionPackagingStation];
+        rgStations[Constants.CUT_GRIND] = new Station[numStations[Constants.CUT_GRIND]];
+        rgStations[Constants.COAT] = new Station[numStations[Constants.COAT]];
+        rgStations[Constants.INSPECT_PACK] = new Station[numStations[Constants.INSPECT_PACK]];
 
-        rcCastingStations = new CastingStation[numCastingStation];
+        rcCastingStations = new CastingStation[numStations[Constants.CAST]];
 
         qRepairQueue = new RepairQueue();
         qIOAreas = new IOArea[2][4][];
@@ -225,7 +206,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         System.out.println("   CAST:");
         System.out.println("      RC.CastingStations:");
         String[] planeLabel = new String[] {"F16", "Concorde", "Spitfire"};
-        for (int i = 0; i < numCastingStation; i++) {
+        for (int i = 0; i < numStations[Constants.CAST]; i++) {
             CastingStation station = rcCastingStations[i];
             System.out.println("         " + i + ".busy: " + station.busy + ", timeToFailure: " + String.format( "%.2f", station.timeToFailure) +
                     ", castingTimeLeft: " + String.format( "%.2f", station.castingTimeLeft) + ", planeType: " + planeLabel[station.planeType]);
@@ -234,7 +215,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         // casting output areas
         System.out.println("      Q.IOAreas[OUT][CAST]");
         System.out.print("         ");
-        for (int stationId = 0; stationId < numCastingStation; stationId++) {
+        for (int stationId = 0; stationId < numStations[Constants.CAST]; stationId++) {
             System.out.print(stationId + ".n: " + qIOAreas[Constants.OUT][Constants.CAST][stationId].getN() + "  ");
         }
         System.out.println();

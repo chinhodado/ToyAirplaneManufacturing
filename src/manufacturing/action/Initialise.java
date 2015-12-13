@@ -40,17 +40,17 @@ public class Initialise extends ScheduledAction {
         }
 
         // Casting stations
-        for (int stationId = 0; stationId < model.numF16CastingStation; stationId++) {
+        for (int stationId = 0; stationId < model.numCastingStations[Constants.F16]; stationId++) {
             model.rcCastingStations[stationId] = new CastingStation(Constants.F16);
         }
-        for (int stationId = 0; stationId < model.numSpitfireCastingStation; stationId++) {
-            model.rcCastingStations[stationId + model.numF16CastingStation] = new CastingStation(Constants.SPITFIRE);
+        for (int stationId = 0; stationId < model.numCastingStations[Constants.SPITFIRE]; stationId++) {
+            model.rcCastingStations[stationId + model.numCastingStations[Constants.F16]] = new CastingStation(Constants.SPITFIRE);
         }
-        for (int stationId = 0; stationId < model.numConcordeCastingStation; stationId++) {
-            model.rcCastingStations[stationId + model.numF16CastingStation + model.numSpitfireCastingStation] =
+        for (int stationId = 0; stationId < model.numCastingStations[Constants.CONCORDE]; stationId++) {
+            model.rcCastingStations[stationId + model.numCastingStations[Constants.F16] + model.numCastingStations[Constants.SPITFIRE]] =
                     new CastingStation(Constants.CONCORDE);
         }
-        for (int stationId = 0; stationId < model.numCastingStation; stationId++) {
+        for (int stationId = 0; stationId < model.numStations[Constants.CAST]; stationId++) {
             model.rcCastingStations[stationId].timeToFailure = model.rvp.uTimeToFailure();
         }
 
