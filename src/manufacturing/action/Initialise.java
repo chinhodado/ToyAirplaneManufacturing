@@ -52,9 +52,9 @@ public class Initialise extends ScheduledAction {
         }
 
         // these are already 0 by default, but let's just be explicit
-        model.castingsCreated[Constants.F16] = 0;
-        model.castingsCreated[Constants.SPITFIRE] = 0;
-        model.castingsCreated[Constants.CONCORDE] = 0;
+        model.output.castingsCreated[Constants.F16] = 0;
+        model.output.castingsCreated[Constants.SPITFIRE] = 0;
+        model.output.castingsCreated[Constants.CONCORDE] = 0;
 
         // Input areas and unloading queues
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {

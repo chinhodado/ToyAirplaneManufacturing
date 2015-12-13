@@ -70,7 +70,7 @@ public class Cast extends Activity {
             // done with the casting session
             if (station.castingTimeLeft == duration) {
                 station.bin.planeType = station.planeType;
-                model.castingsCreated[station.planeType] += 4;
+                model.output.castingsCreated[station.planeType] += 4;
             }
             // if castingTimeLeft > duration, that means interrupted again - this machine sure breaks down a lot...
             // either way, reduce castingTimeLeft by duration and add the wasted time (will be reduced to 0 if the casting session is completed)
@@ -92,7 +92,7 @@ public class Cast extends Activity {
             // new casting session is done
             else if (duration == model.rvp.uStationWorkTime(Constants.CAST)) {
                 station.bin.planeType = station.planeType;
-                model.castingsCreated[station.planeType] += 4;
+                model.output.castingsCreated[station.planeType] += 4;
             }
             // can't be >, wouldn't make sense (duration must be <= casting time, always)
         }

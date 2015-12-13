@@ -8,6 +8,9 @@ public class Output {
     public int numF16ProducedDaily;
     public int numConcordeProducedDaily;
 
+    // for keeping track of number of casting created for each type of planes
+    public int[] castingsCreated = new int[3];
+
     // Constructor
     protected Output(ToyAirplaneManufacturing model) {
         this.model = model;

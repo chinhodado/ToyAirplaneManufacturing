@@ -72,9 +72,6 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         return output.numSpitfireProducedDaily;
     }
 
-    // for keeping track of number of casting created for each type of planes
-    public int[] castingsCreated = new int[3];
-
     double endTime;
 
     /**
