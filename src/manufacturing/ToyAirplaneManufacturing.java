@@ -204,7 +204,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         // so all stations must be empty. We also don't allow the time
         // to go past 8 hours so the workers can go home.
         if (sbl.isEmpty() || getClock() > 480) {
-            System.out.println("Current time at ending: " + getClock());
+            if (logFlag) System.out.println("Current time at ending: " + getClock());
             return true;
         }
 

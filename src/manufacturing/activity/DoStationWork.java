@@ -46,6 +46,9 @@ public class DoStationWork extends Activity {
     public void terminatingEvent() {
         model.rgStations[stationType][stationId].busy = false;
 
+        // We opted to leave the model as-is and don't add in the 88% pass rate, since adding it would destroy
+        // some existing assumptions in the current model, such as the casting stations can't stop making castings
+        // when the casting quota is reached anymore.
         if (stationType == Constants.INSPECT_PACK) {
             switch (model.rgStations[stationType][stationId].bin.planeType) {
             case Constants.SPITFIRE:

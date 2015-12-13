@@ -5,7 +5,7 @@ import manufacturing.ToyAirplaneManufacturing;
 import simulationModelling.ConditionalAction;
 
 /**
- * A mover load bins into his trolley from the output areas of a station.
+ * A mover load a bin into his trolley from an output area of a station.
  */
 public class LoadBin extends ConditionalAction {
     private ToyAirplaneManufacturing model;

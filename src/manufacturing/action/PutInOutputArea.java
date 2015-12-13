@@ -5,7 +5,7 @@ import manufacturing.ToyAirplaneManufacturing;
 import simulationModelling.ConditionalAction;
 
 /**
- * Put planes and castings in bins at the output area of a station when there is space available at that output area.
+ * Put a bin into the output area of a station when there is space available at that output area.
  */
 public class PutInOutputArea extends ConditionalAction {
     private ToyAirplaneManufacturing model;

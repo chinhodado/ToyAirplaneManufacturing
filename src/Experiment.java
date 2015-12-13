@@ -7,10 +7,10 @@ import cern.jet.random.engine.RandomSeedGenerator;
 import manufacturing.Seeds;
 import manufacturing.ToyAirplaneManufacturing;
 
+/**
+ *  Used for finding the minimum number of stations and movers required to meet the production requirement.
+ */
 public class Experiment {
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         int i, NUMRUNS = 5;
         double endTime = 8 * 60; // run for 8 hours
@@ -126,15 +126,19 @@ public class Experiment {
                 }
             }
             else if (!foundFinalNumCuttingGrindingStations) {
+                System.out.println("Adding 1 cutting/grinding station");
                 numCuttingGrindingStation++;
             }
             else if (!foundFinalNumCoatingStations) {
+                System.out.println("Adding 1 coating station");
                 numCoatingStation++;
             }
             else if (!foundFinalNumInspectionPackagingStations) {
+                System.out.println("Adding 1 inspection/packaging station");
                 numInspectionPackagingStation++;
             }
             else if (!foundFinalNumMover) {
+                System.out.println("Adding 1 mover");
                 numMover++;
             }
         }

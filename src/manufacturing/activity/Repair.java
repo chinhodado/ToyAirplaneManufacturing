@@ -5,7 +5,6 @@ import simulationModelling.Activity;
 
 /**
  * Repair a casting station when it is broken down. The maintenance person must not be busy.
- *
  */
 public class Repair extends Activity {
     private ToyAirplaneManufacturing model;

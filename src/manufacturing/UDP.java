@@ -149,7 +149,7 @@ public class UDP {
     }
 
     /**
-     *
+     * Get a mover ready for moving, and the stationType of where the mover currently is
      * @return [moverId, stationType], or [NONE, NONE]
      */
     public int[] MoverReadyForMoving() {
@@ -170,6 +170,10 @@ public class UDP {
         return new int[] { Constants.NONE, Constants.NONE };
     }
 
+    /**
+     * Get a casting station ready for casting
+     * @return The stationId of the casting station, or NONE.
+     */
     public int StationReadyForCasting() {
         for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
             if (!model.rcCastingStations[stationId].busy &&
@@ -206,7 +210,7 @@ public class UDP {
 
     /**
      * Get an output area ready for putting bin in
-     * @return
+     * @return [stationType, stationId] or [NONE, NONE]
      */
     public int[] GetReadyOutputArea() {
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
@@ -271,7 +275,7 @@ public class UDP {
     /**
      * Return true if the mover has all Spitfire bins, and false otherwise
      * @param moverId The moverId
-     * @return
+     * @return true if the mover has all Spitfire bins, and false otherwise
      */
     public boolean HasAllSpitfirePlanes(int moverId) {
         for (Bin bin : model.rgMovers[moverId].binList) {

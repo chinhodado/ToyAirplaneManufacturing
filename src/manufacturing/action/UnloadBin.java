@@ -5,7 +5,7 @@ import manufacturing.ToyAirplaneManufacturing;
 import simulationModelling.ConditionalAction;
 
 /**
- * A mover unload his bins into the input areas of a station when there are free spaces available.
+ * A mover unload a bin into an input areas of a station when there is a free space available.
  */
 public class UnloadBin extends ConditionalAction {
     private ToyAirplaneManufacturing model;

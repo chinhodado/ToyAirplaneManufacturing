@@ -10,6 +10,9 @@ import manufacturing.entity.Mover;
 import manufacturing.entity.Station;
 import simulationModelling.ScheduledAction;
 
+/**
+ * Action to initialize the model
+ */
 public class Initialise extends ScheduledAction {
     private ToyAirplaneManufacturing model;
 
@@ -51,7 +54,7 @@ public class Initialise extends ScheduledAction {
             model.rcCastingStations[stationId].timeToFailure = model.rvp.uTimeToFailure();
         }
 
-        // these are already 0 by default, but let's just be explicit
+        // outputs: these are already 0 by default, but let's just be explicit
         model.output.castingsCreated[Constants.F16] = 0;
         model.output.castingsCreated[Constants.SPITFIRE] = 0;
         model.output.castingsCreated[Constants.CONCORDE] = 0;
@@ -75,11 +78,14 @@ public class Initialise extends ScheduledAction {
             model.qLoadUnload[Constants.OUT][stationType] = new LoadUnload();
         }
 
+        // add movers to casting area loading queue
         for (int moverId = 0; moverId < model.numMover; moverId++) {
             model.rgMovers[moverId] = new Mover();
             model.qLoadUnload[Constants.OUT][Constants.CAST].spInsertQue(moverId);
         }
 
+        // maintenance person
         model.rMaintenancePerson = new MaintenancePerson();
+        model.rMaintenancePerson.busy = false;
     }
 }

@@ -6,9 +6,7 @@ import manufacturing.entity.Bin;
 import simulationModelling.Activity;
 
 /**
- * Creates casting at a casting station when the casting machine is not busy,
- * does not contain a casting and the casting time is less than the time to failure.
- *
+ * Create casting at a casting station
  */
 public class Cast extends Activity {
     private ToyAirplaneManufacturing model;
