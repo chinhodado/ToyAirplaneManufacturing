@@ -39,14 +39,4 @@ public class Mover {
             comp = binList.remove(0);
         return comp;
     }
-
-    public boolean hasAllSpitfirePlanes() {
-        // I miss C# and LINQ...
-        for (Bin bin : binList) {
-            if (bin.planeType != Constants.SPITFIRE) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

@@ -36,7 +36,7 @@ public class UnloadBin extends ConditionalAction {
             }
         }
         else {
-            if (model.rgMovers[moverId].hasAllSpitfirePlanes() && stationType == Constants.COAT) {
+            if (model.udp.HasAllSpitfirePlanes(moverId) && stationType == Constants.COAT) {
                 model.qLoadUnload[Constants.IN][stationType].spRemoveQue(moverId);
                 model.qLoadUnload[Constants.OUT][stationType].spInsertQue(moverId);
             }

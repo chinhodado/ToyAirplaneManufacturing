@@ -126,7 +126,7 @@ public class UDP {
         for (Integer moverId : model.qLoadUnload[Constants.IN][stationType].moverList) {
             if (model.rgMovers[moverId].getN() > 0) {
                 if (stationType != Constants.COAT ||
-                    (stationType == Constants.COAT && !model.rgMovers[moverId].hasAllSpitfirePlanes())) {
+                    (stationType == Constants.COAT && !HasAllSpitfirePlanes(moverId))) {
                     return moverId;
                 }
             }
@@ -238,7 +238,7 @@ public class UDP {
      * @return The next station type
      */
     public int MovePlanes(int moverId, int currentStationType) {
-        boolean hasAllSpitfirePlanes = model.rgMovers[moverId].hasAllSpitfirePlanes();
+        boolean hasAllSpitfirePlanes = HasAllSpitfirePlanes(moverId);
 
         int nextStationType = Constants.NONE;
 
@@ -266,5 +266,19 @@ public class UDP {
         }
 
         return nextStationType;
+    }
+
+    /**
+     * Return true if the mover has all Spitfire bins, and false otherwise
+     * @param moverId The moverId
+     * @return
+     */
+    public boolean HasAllSpitfirePlanes(int moverId) {
+        for (Bin bin : model.rgMovers[moverId].binList) {
+            if (bin.planeType != Constants.SPITFIRE) {
+                return false;
+            }
+        }
+        return true;
     }
 }
