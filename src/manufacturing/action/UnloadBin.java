@@ -8,7 +8,7 @@ import simulationModelling.ConditionalAction;
  * A mover unload his bins into the input areas of a station when there are free spaces available.
  */
 public class UnloadBin extends ConditionalAction {
-    ToyAirplaneManufacturing model;
+    private ToyAirplaneManufacturing model;
 
     public UnloadBin(ToyAirplaneManufacturing model) {
         this.model = model;

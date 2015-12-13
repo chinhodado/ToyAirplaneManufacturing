@@ -2,17 +2,15 @@ package manufacturing.activity;
 
 import manufacturing.Constants;
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.entity.Station;
 import simulationModelling.Activity;
 
 /**
  * Depending on the type of station, do the cutting/grinding, coating or inspection/packaging.
  */
 public class DoStationWork extends Activity {
-    ToyAirplaneManufacturing model;
-    Station station;
-    int stationType;
-    int stationId;
+    private ToyAirplaneManufacturing model;
+    private int stationType;
+    private int stationId;
 
     public DoStationWork(ToyAirplaneManufacturing model) {
         this.model = model;
@@ -35,9 +33,8 @@ public class DoStationWork extends Activity {
         this.name = Constants.stationLabel[stationType] + "_" + stationId;
 
         // Set station to busy and move bin from input area to station
-        station = model.rgStations[stationType][stationId];
-        station.busy = true;
-        station.bin = model.qIOAreas[Constants.IN][stationType][stationId].spRemoveQue();
+        model.rgStations[stationType][stationId].busy = true;
+        model.rgStations[stationType][stationId].bin = model.qIOAreas[Constants.IN][stationType][stationId].spRemoveQue();
     }
 
     @Override
@@ -47,10 +44,10 @@ public class DoStationWork extends Activity {
 
     @Override
     public void terminatingEvent() {
-        station.busy = false;
+        model.rgStations[stationType][stationId].busy = false;
 
         if (stationType == Constants.INSPECT_PACK) {
-            switch (station.bin.planeType) {
+            switch (model.rgStations[stationType][stationId].bin.planeType) {
             case Constants.SPITFIRE:
                 model.output.numSpitfireProducedDaily += 24;
                 break;
@@ -61,11 +58,11 @@ public class DoStationWork extends Activity {
                 model.output.numConcordeProducedDaily += 24;
                 break;
             default:
-                System.out.printf("DoStationWork.terminatingEvent: Invalid plane type: %d\n", station.bin.planeType);
+                System.out.printf("DoStationWork.terminatingEvent: Invalid plane type: %d\n", model.rgStations[stationType][stationId].bin.planeType);
                 break;
             }
 
-            station.bin = Constants.NO_BIN;
+            model.rgStations[stationType][stationId].bin = Constants.NO_BIN;
         }
     }
 }

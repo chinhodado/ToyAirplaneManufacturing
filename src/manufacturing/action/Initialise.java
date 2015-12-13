@@ -11,7 +11,7 @@ import manufacturing.entity.Station;
 import simulationModelling.ScheduledAction;
 
 public class Initialise extends ScheduledAction {
-    ToyAirplaneManufacturing model;
+    private ToyAirplaneManufacturing model;
 
     // Constructor
     public Initialise(ToyAirplaneManufacturing model) {

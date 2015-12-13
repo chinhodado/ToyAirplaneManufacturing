@@ -103,6 +103,8 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
         numInspectionPackagingStation = params[6];
 
         numCastingStation = numF16CastingStation + numConcordeCastingStation + numSpitfireCastingStation;
+
+        // number of different types of stations - useful for use in loops, etc.
         numStations = new int[] { numCastingStation, numCuttingGrindingStation,
                 numCoatingStation, numInspectionPackagingStation };
 
@@ -254,7 +256,7 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
             printDebug();
     }
 
-    protected void printDebug() {
+    private void printDebug() {
         // Debugging
         System.out.printf("Clock = %10.4f\n", getClock());
 

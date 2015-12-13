@@ -8,7 +8,7 @@ import simulationModelling.ConditionalAction;
  * A mover load bins into his trolley from the output areas of a station.
  */
 public class LoadBin extends ConditionalAction {
-    ToyAirplaneManufacturing model;
+    private ToyAirplaneManufacturing model;
 
     public LoadBin(ToyAirplaneManufacturing model) {
         this.model = model;

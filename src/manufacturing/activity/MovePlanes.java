@@ -10,10 +10,10 @@ import simulationModelling.Activity;
  * or when he is at the unloading queue of the INSPECT_PACK station and he has no bin left.
  */
 public class MovePlanes extends Activity {
-    ToyAirplaneManufacturing model;
-    int moverId;
-    int stationType;
-    int nextStationType;
+    private ToyAirplaneManufacturing model;
+    private int moverId;
+    private int stationType;
+    private int nextStationType;
 
     public MovePlanes(ToyAirplaneManufacturing model) {
         this.model = model;

@@ -3,10 +3,7 @@ package manufacturing;
 import java.util.ArrayList;
 
 import manufacturing.entity.Bin;
-import manufacturing.entity.CastingStation;
-import manufacturing.entity.IOArea;
 import manufacturing.entity.Mover;
-import manufacturing.entity.Station;
 
 /**
  * User Defined Procedures
@@ -31,9 +28,7 @@ public class UDP {
             // alternatively, we can use a priority queue, but nah...
             int stationIdWithMinInput = 0;
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                IOArea currentInputArea = model.qIOAreas[Constants.IN][stationType][stationId];
-                IOArea currentMinInputArea = model.qIOAreas[Constants.IN][stationType][stationIdWithMinInput];
-                if (currentInputArea.getN() < currentMinInputArea.getN()) {
+                if (model.qIOAreas[Constants.IN][stationType][stationId].getN() < model.qIOAreas[Constants.IN][stationType][stationIdWithMinInput].getN()) {
                     stationIdWithMinInput = stationId;
                 }
             }
@@ -47,23 +42,27 @@ public class UDP {
     }
 
     /**
-     * Unload a mover's bins into the input area of a station, one at a time
+     * Unload a mover's bins into the input area of a station, one at a time.
+     * We need to be given the moverId since we can't just take the mover from the top of the queue
+     * - for example, a mover at the unload queue of the inspect/pack area may have already unloaded
+     * all of his bins and have no bin left, but he is still in the queue since the activity MovePlanes
+     * have not started yet.
      * @param moverId The id of the mover
      * @param stationType The station type
      * @param stationId The station ID
      */
     public void UnloadBin(int moverId, int stationType, int stationId) {
-        Mover mover = model.rgMovers[moverId];
-        IOArea inputArea = model.qIOAreas[Constants.IN][stationType][stationId];
         boolean doneUnload = false;
-        for (Bin bin : new ArrayList<Bin>(mover.binList)) { // clone-and-remove trick
+        // make a copy of existing list and iterate over the new copy, while removing from the
+        // original list if needed
+        for (Bin bin : new ArrayList<Bin>(model.rgMovers[moverId].binList)) {
             if (doneUnload) {
                 break;
             }
             else if (stationType != Constants.COAT ||
                     (stationType == Constants.COAT && bin.planeType != Constants.SPITFIRE)) {
-                inputArea.spInsertQue(bin);
-                mover.binList.remove(bin);
+                model.qIOAreas[Constants.IN][stationType][stationId].spInsertQue(bin);
+                model.rgMovers[moverId].binList.remove(bin);
                 doneUnload = true;
             }
         }
@@ -79,9 +78,7 @@ public class UDP {
             // the stationId of the station with an output area that has the most bins,
             int stationIdWithMaxOutput = 0;
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                IOArea currentOutputArea = model.qIOAreas[Constants.OUT][stationType][stationId];
-                IOArea currentMaxOutputArea = model.qIOAreas[Constants.OUT][stationType][stationIdWithMaxOutput];
-                if (currentOutputArea.getN() > currentMaxOutputArea.getN()) {
+                if (model.qIOAreas[Constants.OUT][stationType][stationId].getN() > model.qIOAreas[Constants.OUT][stationType][stationIdWithMaxOutput].getN()) {
                     stationIdWithMaxOutput = stationId;
                 }
             }
@@ -101,31 +98,35 @@ public class UDP {
      * @param stationId The station ID
      */
     public void LoadBin(int moverId, int stationType, int stationId) {
-        Mover mover = model.rgMovers[moverId];
-        IOArea outputArea = model.qIOAreas[Constants.OUT][stationType][stationId];
         // this is just to be safe - if we are in here it means that we got a valid moverId
         // from GetMoverReadyForLoad already
-        int numEmptySlots = Mover.MAX_NUM_BIN - mover.getN();
+        int numEmptySlots = Mover.MAX_NUM_BIN - model.rgMovers[moverId].getN();
         boolean doneLoading = false;
-        for (Bin bin : new ArrayList<Bin>(outputArea.binList)) { // clone-and-remove trick
+        // make a copy of existing list and iterate over the new copy, while removing from the
+        // original list if needed
+        for (Bin bin : new ArrayList<Bin>(model.qIOAreas[Constants.OUT][stationType][stationId].binList)) {
             if (numEmptySlots <= 0 || doneLoading) {
                 break;
             }
             else {
-                mover.binList.add(bin);
-                outputArea.binList.remove(bin);
+                model.rgMovers[moverId].binList.add(bin);
+                model.qIOAreas[Constants.OUT][stationType][stationId].binList.remove(bin);
                 numEmptySlots--;
                 doneLoading = true;
             }
         }
     }
 
-    public int GetMoverReadyForUnload(int stationType) {
+    /**
+     * Get a mover ready for unloading bin at the unloading queue of a station type
+     * @param stationType The station type
+     * @return The moverId of the ready mover
+     */
+    private int GetMoverReadyForUnload(int stationType) {
         for (Integer moverId : model.qLoadUnload[Constants.IN][stationType].moverList) {
-            Mover mover = model.rgMovers[moverId];
-            if (mover.getN() > 0) {
+            if (model.rgMovers[moverId].getN() > 0) {
                 if (stationType != Constants.COAT ||
-                    (stationType == Constants.COAT && !mover.hasAllSpitfirePlanes())) {
+                    (stationType == Constants.COAT && !model.rgMovers[moverId].hasAllSpitfirePlanes())) {
                     return moverId;
                 }
             }
@@ -133,10 +134,14 @@ public class UDP {
         return Constants.NONE;
     }
 
-    public int GetMoverReadyForLoad(int stationType) {
+    /**
+     * Get a mover ready for loading bin at the loading queue of a station type
+     * @param stationType The station type
+     * @return The moverId of the ready mover
+     */
+    private int GetMoverReadyForLoad(int stationType) {
         for (Integer moverId : model.qLoadUnload[Constants.OUT][stationType].moverList) {
-            Mover mover = model.rgMovers[moverId];
-            if (mover.getN() < Mover.MAX_NUM_BIN) {
+            if (model.rgMovers[moverId].getN() < Mover.MAX_NUM_BIN) {
                 return moverId;
             }
         }
@@ -149,15 +154,14 @@ public class UDP {
      */
     public int[] MoverReadyForMoving() {
         for (int moverId = 0; moverId < model.rgMovers.length; moverId++) {
-            Mover mover = model.rgMovers[moverId];
-            if (mover.getN() == Mover.MAX_NUM_BIN) {
+            if (model.rgMovers[moverId].getN() == Mover.MAX_NUM_BIN) {
                 for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
                     if (model.qLoadUnload[Constants.OUT][stationType].contains(moverId)) {
                         return new int[] { moverId, stationType};
                     }
                 }
             }
-            else if (mover.getN() == 0) {
+            else if (model.rgMovers[moverId].getN() == 0) {
                 if (model.qLoadUnload[Constants.IN][Constants.INSPECT_PACK].contains(moverId)) {
                     return new int[] { moverId, Constants.INSPECT_PACK};
                 }
@@ -168,11 +172,12 @@ public class UDP {
 
     public int StationReadyForCasting() {
         for (int stationId = 0; stationId < model.rcCastingStations.length; stationId++) {
-            CastingStation station = model.rcCastingStations[stationId];
-            if (!station.busy &&
-                station.timeToFailure != 0 &&
-                ((station.bin == Constants.NO_BIN && model.getClock() < model.endTime && model.output.castingsCreated[station.planeType] < Constants.NUM_CASTING_NEEDED[station.planeType]) ||
-                 (station.bin != Constants.NO_BIN && station.castingTimeLeft > 0))) {
+            if (!model.rcCastingStations[stationId].busy &&
+                model.rcCastingStations[stationId].timeToFailure != 0 &&
+                ((model.rcCastingStations[stationId].bin == Constants.NO_BIN &&
+                    model.getClock() < model.endTime &&
+                    model.output.castingsCreated[model.rcCastingStations[stationId].planeType] < Constants.NUM_CASTING_NEEDED[model.rcCastingStations[stationId].planeType]) ||
+                 (model.rcCastingStations[stationId].bin != Constants.NO_BIN && model.rcCastingStations[stationId].castingTimeLeft > 0))) {
                 return stationId;
             }
         }
@@ -188,9 +193,8 @@ public class UDP {
     public int[] StationReadyForWork() {
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
-                Station station = model.rgStations[stationType][stationId];
-                if (!station.busy &&
-                    station.bin == Constants.NO_BIN &&
+                if (!model.rgStations[stationType][stationId].busy &&
+                    model.rgStations[stationType][stationId].bin == Constants.NO_BIN &&
                     model.qIOAreas[Constants.IN][stationType][stationId].getN() > 0) {
                     return new int[] { stationType, stationId };
                 }
@@ -209,13 +213,13 @@ public class UDP {
             for (int stationId = 0; stationId < model.numStations[stationType]; stationId++) {
                 boolean condition = model.qIOAreas[Constants.OUT][stationType][stationId].getN() < 5;
                 if (stationType == Constants.CAST) {
-                    CastingStation station = model.rcCastingStations[stationId];
-                    condition = condition && station.bin != Constants.NO_BIN &&
-                            station.bin.planeType != Constants.NONE && !station.busy;
+                    condition = condition && model.rcCastingStations[stationId].bin != Constants.NO_BIN &&
+                            model.rcCastingStations[stationId].bin.planeType != Constants.NONE &&
+                            !model.rcCastingStations[stationId].busy;
                 }
                 else {
-                    Station station = model.rgStations[stationType][stationId];
-                    condition = condition && station.bin != Constants.NO_BIN && !station.busy;
+                    condition = condition && model.rgStations[stationType][stationId].bin != Constants.NO_BIN &&
+                            !model.rgStations[stationType][stationId].busy;
                 }
 
                 if (condition) {
@@ -234,8 +238,7 @@ public class UDP {
      * @return The next station type
      */
     public int MovePlanes(int moverId, int currentStationType) {
-        Mover mover = model.rgMovers[moverId];
-        boolean hasAllSpitfirePlanes = mover.hasAllSpitfirePlanes();
+        boolean hasAllSpitfirePlanes = model.rgMovers[moverId].hasAllSpitfirePlanes();
 
         int nextStationType = Constants.NONE;
 

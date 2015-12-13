@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import manufacturing.Constants;
 
+/**
+ * Given that this is a simple queue, we could have simply use the ArrayList class directly.
+ * However we want to make it consistent (one class per entity)
+ */
 public class LoadUnload {
     // Implement the queue using an ArrayList object
     // Size is initialized to 0

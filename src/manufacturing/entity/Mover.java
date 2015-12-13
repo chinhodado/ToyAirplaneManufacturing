@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import manufacturing.Constants;
 
+/**
+ * Given that this is a simple queue, we could have simply use the ArrayList class directly.
+ * However we want to make it consistent (one class per entity)
+ */
 public class Mover {
     public ArrayList<Bin> binList = new ArrayList<Bin>();
 
@@ -19,10 +23,10 @@ public class Mover {
 
     /**
      * Add a bin to this mover's trolley
-     * @param comp
+     * @param bin
      */
-    public void spInsertQue(Bin comp) {
-        binList.add(comp);
+    public void spInsertQue(Bin bin) {
+        binList.add(bin);
     }
 
     /**

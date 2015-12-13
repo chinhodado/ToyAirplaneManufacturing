@@ -1,7 +1,6 @@
 package manufacturing.activity;
 
 import manufacturing.ToyAirplaneManufacturing;
-import manufacturing.entity.CastingStation;
 import simulationModelling.Activity;
 
 /**
@@ -9,8 +8,8 @@ import simulationModelling.Activity;
  *
  */
 public class Repair extends Activity {
-    ToyAirplaneManufacturing model;
-    int stationId;
+    private ToyAirplaneManufacturing model;
+    private int stationId;
 
     public Repair(ToyAirplaneManufacturing model) {
         this.model = model;
@@ -35,8 +34,7 @@ public class Repair extends Activity {
 
     @Override
     protected void terminatingEvent() {
-        CastingStation station = model.rcCastingStations[stationId];
-        station.timeToFailure = model.rvp.uTimeToFailure();
+        model.rcCastingStations[stationId].timeToFailure = model.rvp.uTimeToFailure();
         model.rMaintenancePerson.busy = false;
     }
 }
