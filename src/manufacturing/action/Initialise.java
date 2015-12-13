@@ -1,5 +1,7 @@
-package manufacturing;
+package manufacturing.action;
 
+import manufacturing.Constants;
+import manufacturing.ToyAirplaneManufacturing;
 import manufacturing.entity.CastingStation;
 import manufacturing.entity.IOArea;
 import manufacturing.entity.LoadUnload;
@@ -8,7 +10,7 @@ import manufacturing.entity.Mover;
 import manufacturing.entity.Station;
 import simulationModelling.ScheduledAction;
 
-class Initialise extends ScheduledAction {
+public class Initialise extends ScheduledAction {
     ToyAirplaneManufacturing model;
 
     // Constructor

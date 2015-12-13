@@ -1,5 +1,6 @@
 package manufacturing;
 
+import manufacturing.action.Initialise;
 import manufacturing.action.LoadBin;
 import manufacturing.action.PutInOutputArea;
 import manufacturing.action.UnloadBin;
@@ -33,10 +34,15 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     public MaintenancePerson rMaintenancePerson;
 
     // Parameters
-    int numMover, numF16CastingStation, numConcordeCastingStation, numSpitfireCastingStation,
-        numCuttingGrindingStation, numCoatingStation, numInspectionPackagingStation;
-    int numCastingStation; // total number of casting stations
-    int[] numStations;
+    public int numMover;
+    public int numF16CastingStation;
+    public int numConcordeCastingStation;
+    public int numSpitfireCastingStation;
+    public int numCuttingGrindingStation;
+    public int numCoatingStation;
+    public int numInspectionPackagingStation;
+    public int numCastingStation; // total number of casting stations
+    public int[] numStations;
 
     // Random Variate Procedures
     public RVP rvp;
