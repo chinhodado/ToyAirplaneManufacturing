@@ -200,54 +200,15 @@ public class ToyAirplaneManufacturing extends AOSimulationModel {
     public boolean implicitStopCondition() {
         // termination explicit
 
-        // time must be at least 8 hours
-        if (getClock() < endTime) {
-            return false;
+        // if sbl is empty, it means that no more activity can be done,
+        // so all stations must be empty. We also don't allow the time
+        // to go past 8 hours so the workers can go home.
+        if (sbl.isEmpty() || getClock() > 480) {
+            System.out.println("Current time at ending: " + getClock());
+            return true;
         }
 
-        // no casting stations can be holding a bin
-        for (int i = 0; i < numCastingStation; i++) {
-            if (rcCastingStations[i].bin != Constants.NO_BIN) {
-                return false;
-            }
-        }
-
-        // nor can be any other station
-        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                if (rgStations[stationType][stationId].bin != Constants.NO_BIN) {
-                    return false;
-                }
-            }
-        }
-
-        // all input areas must be empty
-        for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                if (qIOAreas[Constants.IN][stationType][stationId].getN() > 0) {
-                    return false;
-                }
-            }
-        }
-
-        // and so are all output areas
-        for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
-            for (int stationId = 0; stationId < numStations[stationType]; stationId++) {
-                if (qIOAreas[Constants.OUT][stationType][stationId].getN() > 0) {
-                    return false;
-                }
-            }
-        }
-
-        // finally, no movers can be holding any bins
-        for (Mover mover : rgMovers) {
-            if (mover.getN() > 0) {
-                return false;
-            }
-        }
-
-        System.out.println("Current time at ending: " + getClock());
-        return true;
+        return false;
     }
 
     @Override
