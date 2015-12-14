@@ -18,8 +18,8 @@ public class UDP {
 
     /**
      * Get the the input area of a station with stationType and stationId
-     * that has the most empty space for a mover to load his bin into, and the moverId of that mover
-     * @return [stationType, stationId, moverId], or [NONE, NONE, NONE] if no input area satisfies the condition
+     * that has the most empty space for a mover to load his bin into
+     * @return [stationType, stationId], or [NONE, NONE] if no input area satisfies the condition
      */
     public int[] GetInputAreaWithEmptySpace() {
         for (int stationType = Constants.CUT_GRIND; stationType <= Constants.INSPECT_PACK; stationType++) {
@@ -32,26 +32,21 @@ public class UDP {
                     stationIdWithMinInput = stationId;
                 }
             }
-            int moverId = GetMoverReadyForUnload(stationType);
             if (model.qIOAreas[Constants.IN][stationType][stationIdWithMinInput].getN() < 5 &&
-                moverId != Constants.NONE) {
-                return new int[] {stationType, stationIdWithMinInput, moverId};
+                model.qLoadUnload[Constants.IN][stationType].getN() > 0) {
+                return new int[] {stationType, stationIdWithMinInput};
             }
         }
-        return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
+        return new int[] { Constants.NONE, Constants.NONE };
     }
 
     /**
      * Unload a mover's bins into the input area of a station, one at a time.
-     * We need to be given the moverId since we can't just take the mover from the top of the queue
-     * - for example, a mover at the unload queue of the inspect/pack area may have already unloaded
-     * all of his bins and have no bin left, but he is still in the queue since the activity MovePlanes
-     * have not started yet.
-     * @param moverId The id of the mover
      * @param stationType The station type
      * @param stationId The station ID
      */
-    public void UnloadBin(int moverId, int stationType, int stationId) {
+    public int UnloadBin(int stationType, int stationId) {
+        int moverId = model.qLoadUnload[Constants.IN][stationType].moverList.get(0);
         boolean doneUnload = false;
         // make a copy of existing list and iterate over the new copy, while removing from the
         // original list if needed
@@ -66,12 +61,13 @@ public class UDP {
                 doneUnload = true;
             }
         }
+        return moverId;
     }
 
     /**
      * Get the the output area of a station with stationType and stationId
-     * that has a bin for a mover to load into his trolley, and the moverId of that mover
-     * @return [stationType, stationId, moverId], or [NONE, NONE, NONE] if no output area satisfies the condition
+     * that has a bin for a mover to load into his trolley
+     * @return [stationType, stationId], or [NONE, NONE] if no output area satisfies the condition
      */
     public int[] GetOutputAreaWithBin() {
         for (int stationType = Constants.CAST; stationType <= Constants.COAT; stationType++) {
@@ -82,24 +78,22 @@ public class UDP {
                     stationIdWithMaxOutput = stationId;
                 }
             }
-            int moverId = GetMoverReadyForLoad(stationType);
             if (model.qIOAreas[Constants.OUT][stationType][stationIdWithMaxOutput].getN() > 0 &&
-                moverId != Constants.NONE) {
-                return new int[] {stationType, stationIdWithMaxOutput, moverId};
+                model.qLoadUnload[Constants.OUT][stationType].getN() > 0) {
+                return new int[] {stationType, stationIdWithMaxOutput};
             }
         }
-        return new int[] { Constants.NONE, Constants.NONE, Constants.NONE };
+        return new int[] { Constants.NONE, Constants.NONE };
     }
 
     /**
      * Load a bin from an output area into a mover's trolley, one at a time
-     * @param moverId The id of the mover
      * @param stationType The station type
      * @param stationId The station ID
      */
-    public void LoadBin(int moverId, int stationType, int stationId) {
-        // this is just to be safe - if we are in here it means that we got a valid moverId
-        // from GetMoverReadyForLoad already
+    public void LoadBin(int stationType, int stationId) {
+        int moverId = model.qLoadUnload[Constants.OUT][stationType].moverList.get(0);
+        // this is just to be safe
         int numEmptySlots = Mover.MAX_NUM_BIN - model.rgMovers[moverId].getN();
         boolean doneLoading = false;
         // make a copy of existing list and iterate over the new copy, while removing from the
@@ -115,37 +109,6 @@ public class UDP {
                 doneLoading = true;
             }
         }
-    }
-
-    /**
-     * Get a mover ready for unloading bin at the unloading queue of a station type
-     * @param stationType The station type
-     * @return The moverId of the ready mover
-     */
-    private int GetMoverReadyForUnload(int stationType) {
-        for (Integer moverId : model.qLoadUnload[Constants.IN][stationType].moverList) {
-            if (model.rgMovers[moverId].getN() > 0) {
-                if (stationType != Constants.COAT ||
-                    (stationType == Constants.COAT && !HasAllSpitfirePlanes(moverId))) {
-                    return moverId;
-                }
-            }
-        }
-        return Constants.NONE;
-    }
-
-    /**
-     * Get a mover ready for loading bin at the loading queue of a station type
-     * @param stationType The station type
-     * @return The moverId of the ready mover
-     */
-    private int GetMoverReadyForLoad(int stationType) {
-        for (Integer moverId : model.qLoadUnload[Constants.OUT][stationType].moverList) {
-            if (model.rgMovers[moverId].getN() < Mover.MAX_NUM_BIN) {
-                return moverId;
-            }
-        }
-        return Constants.NONE;
     }
 
     /**

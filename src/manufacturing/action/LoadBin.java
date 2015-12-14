@@ -23,8 +23,7 @@ public class LoadBin extends ConditionalAction {
         int[] ids = model.udp.GetOutputAreaWithBin();
         int stationType = ids[0];
         int stationId = ids[1];
-        int moverId = ids[2];
         this.name = Constants.stationLabel[stationType] + "_" + stationId;
-        model.udp.LoadBin(moverId, stationType, stationId);
+        model.udp.LoadBin(stationType, stationId);
     }
 }
